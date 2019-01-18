@@ -2,4 +2,15 @@
 
 # V 1.0.0
 
-# 通过贝塞尔函数的时间相关性去获取动画过渡过程中的帧数据
+## 基于贝塞尔曲线的动效插件
+
+## Dynamic effect plugin based Bezier Curve
+
+
+[文档官网](http://transition.jiaminghi.com/)
+
+[Document of official website](http://transition.jiaminghi.com/)
+
+[项目地址](https://github.com/jiaming743/transition)
+
+[Project address](https://github.com/jiaming743/transition)

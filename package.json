@@ -1,0 +1,21 @@
+{
+  "name": "@jiaminghi/transition",
+  "version": "1.0.0",
+  "description": "Dynamic effect plugin based Bezier Curve",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jiaming743/transition.git"
+  },
+  "author": "JiaMing",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jiaming743/transition/issues"
+  },
+  "keywords": [
+    "bezierCurve",
+    "animation",
+    "transition"
+  ],
+  "homepage": "https://github.com/jiaming743/transition#readme"
+}
