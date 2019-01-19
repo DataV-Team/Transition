@@ -155,25 +155,17 @@ function getArrayTransitionState (begin, end, frameState) {
 function getObjectTransitionState (begin, end, frameState) {
   const keys = Object.keys(end)
 
-  const beginValue = Object.values(begin)
-  const endValue = Object.values(end)
+  const beginValue = keys.map(k => begin[k])
+  const endValue = keys.map(k => end[k])
 
   const arrayState = getArrayTransitionState(beginValue, endValue, frameState)
 
-  return arrayState.map(frameState => {
-    const objectFrameState = {}
+  return arrayState.map(item => {
+    const frameData = {}
 
-    frameState.foreach((v, i) => {
-      const key = keys[i]
+    item.forEach((v, i) => (frameData[keys[i]] = v))
 
-      if (v === false) {
-        objectFrameState[key] = end[key]
-      } else {
-        objectFrameState[key] = v
-      }
-    })
-
-    return objectFrameState
+    return frameData
   })
 }
 
