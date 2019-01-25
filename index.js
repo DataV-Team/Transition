@@ -2,16 +2,16 @@ import config from './config'
 
 const defaultTransitionBC = 'linear'
 
-function transition (tBC, begin = false, end = false, frameNum = 30) {
+function transition (tBC, begin = false, end = false, frameNum = 30, deep = false) {
   if (!checkParams(...arguments)) return false
 
   const bezierCurve = getBezierCurve(tBC)
 
   const frameState = getFrameState(bezierCurve, frameNum)
 
-  const transitionState = getTransitionState(begin, end, frameState)
+  if (!deep || typeof end === 'number') return getTransitionState(begin, end, frameState)
 
-  return transitionState
+  return recursionTransitionState(begin, end, frameState)
 }
 
 function checkParams (tBC, begin = false, end = false, frameNum = 30) {
@@ -66,7 +66,7 @@ function getFrameStateFromT (bezierCurve, t) {
   const bezierCurvePointT = getBezierCurvePointTFromReT(tBezierCurvePoint, t)
 
   return getBezierCurveTState(tBezierCurvePoint, bezierCurvePointT)
-} 
+}
 
 function getBezierCurvePointFromT (bezierCurve, t) {
   const lastIndex = bezierCurve.length - 1
@@ -129,6 +129,8 @@ function getTransitionState (begin, end, frameState) {
   if (stateType === 'number') return getNumberTransitionState(begin, end, frameState)
   if (stateType === 'array') return getArrayTransitionState(begin, end, frameState)
   if (stateType === 'object') return getObjectTransitionState(begin, end, frameState)
+
+  return frameState.map(t => end)
 }
 
 function getNumberTransitionState (begin, end, frameState) {
@@ -167,6 +169,23 @@ function getObjectTransitionState (begin, end, frameState) {
 
     return frameData
   })
+}
+
+function recursionTransitionState (begin, end, frameState) {
+  const state = getTransitionState(begin, end, frameState)
+
+  for (let key in end) {
+    const bTemp = begin[key]
+    const eTemp = end[key]
+
+    if (typeof eTemp !== 'object') continue
+
+    const data = recursionTransitionState(bTemp, eTemp, frameState)
+
+    state.forEach((fs, i) => (fs[key] = data[i]))
+  }
+
+  return state
 }
 
 export function injectNewCurve (name, curve) {
