@@ -1,28 +1,49 @@
-import config from './config'
+import curves from './lib/curves'
 
 const defaultTransitionBC = 'linear'
 
-function transition (tBC, begin = false, end = false, frameNum = 30, deep = false) {
+/**
+ * @description Get the N-frame animation state by the start and end state
+ *              of the animation and the easing curve
+ * @param {String|Array} tBC               Easing curve name or data
+ * @param {Number|Arrya|Object} startState Animation start state
+ * @param {Number|Arrya|Object} endState   Animation end state
+ * @param {Number} frameNum                Number of Animation frames
+ * @param {Boolean} deep                   Whether to use recursive mode
+ * @return {Array} State of each frame of the animation
+ */
+function transition (tBC, startState = false, endState = false, frameNum = 30, deep = false) {
   if (!checkParams(...arguments)) return false
 
+  // Get the transition bezier curve
   const bezierCurve = getBezierCurve(tBC)
 
-  const frameState = getFrameState(bezierCurve, frameNum)
+  // Get the progress of each frame state
+  const frameStateProgress = getFrameStateProgress(bezierCurve, frameNum)
 
-  if (!deep || typeof end === 'number') return getTransitionState(begin, end, frameState)
+  // If the recursion mode is not enabled or the state type is Number, the shallow state calculation is performed directly.
+  if (!deep || typeof endState === 'number') return getTransitionState(startState, endState, frameStateProgress)
 
   return recursionTransitionState(begin, end, frameState)
 }
 
-function checkParams (tBC, begin = false, end = false, frameNum = 30) {
-  if (!tBC || begin === false || end === false || !frameNum) {
-    console.warn('Transition Missing Parameters!')
+/**
+ * @description Check if the parameters are legal
+ * @param {String} tBC      Name of transition bezier curve
+ * @param {Any} startState  Transition start state
+ * @param {Any} endState    Transition end state
+ * @param {Number} frameNum Number of transition frames
+ * @return {Boolean} Is the parameter legal
+ */
+function checkParams (tBC, startState = false, endState = false, frameNum = 30) {
+  if (!tBC || startState === false || endState === false || !frameNum) {
+    console.error('Transition Missing Parameters!')
 
     return false
   }
 
   if (typeof begin !== typeof end) {
-    console.warn('Inconsistent Status Types!')
+    console.error('Inconsistent Status Types!')
 
     return false
   }
@@ -30,27 +51,44 @@ function checkParams (tBC, begin = false, end = false, frameNum = 30) {
   const stateType = typeof begin
 
   if (stateType === 'string' || stateType === 'boolean' || !tBC.length) {
-    console.warn('Unsupported Data Type!')
+    console.error('Unsupported Data Type of State!')
 
     return false
+  }
+
+  if (!curves.has(tBC) && !(tBC instanceof Array)) {
+    console.warn('Transition curve not found, default curve will be used!')
   }
 
   return true
 }
 
+/**
+ * @description Get the transition bezier curve
+ * @param {String} tBC Name of transition bezier curve
+ * @return {Array} Bezier curve data
+ */
 function getBezierCurve (tBC) {
-  let bezierCurve = tBC
+  let bezierCurve = ''
 
-  const isString = typeof tBC === 'string'
-
-  if (isString) bezierCurve = config.get(tBC)
-
-  if (!bezierCurve) bezierCurve = config.get(defaultTransitionBC)
+  if (curves.has(tBC)) {
+    bezierCurve = curves.get(tBC)
+  } else if (tBC instanceof Array) {
+    bezierCurve = tBC
+  } else {
+    bezierCurve = curves.get(defaultTransitionBC)
+  }
 
   return bezierCurve
 }
 
-function getFrameState (bezierCurve, frameNum) {
+/**
+ * @description Get the progress of each frame state
+ * @param {Array} bezierCurve Transition bezier curve
+ * @param {Number} frameNum   Number of transition frames
+ * @return {Array} Progress of each frame state
+ */
+function getFrameStateProgress (bezierCurve, frameNum) {
   const tMinus = 1 / (frameNum - 1)
 
   const tState = new Array(frameNum).fill(0).map((t, i) => i * tMinus)
@@ -60,6 +98,12 @@ function getFrameState (bezierCurve, frameNum) {
   return frameState
 }
 
+/**
+ * @description Get the progress of the corresponding frame according to t
+ * @param {Array} bezierCurve Transition bezier curve
+ * @param {Number} t          Current frame t
+ * @return {Number} Progress of current frame
+ */
 function getFrameStateFromT (bezierCurve, t) {
   const tBezierCurvePoint = getBezierCurvePointFromT(bezierCurve, t)
 
@@ -68,6 +112,12 @@ function getFrameStateFromT (bezierCurve, t) {
   return getBezierCurveTState(tBezierCurvePoint, bezierCurvePointT)
 }
 
+/**
+ * @description Get the corresponding sub-curve according to t
+ * @param {Array} bezierCurve Transition bezier curve
+ * @param {Number} t          Current frame t
+ * @return {Array} Sub-curve of t
+ */
 function getBezierCurvePointFromT (bezierCurve, t) {
   const lastIndex = bezierCurve.length - 1
 
@@ -93,6 +143,12 @@ function getBezierCurvePointFromT (bezierCurve, t) {
   return [p0, p1, p2, p3]
 }
 
+/**
+ * @description Get local t based on t and sub-curve
+ * @param {Array} bezierCurve Sub-curve
+ * @param {Number} t          Current frame t
+ * @return {Number} local t of sub-curve
+ */
 function getBezierCurvePointTFromReT (bezierCurve, t) {
   const reBeginX = bezierCurve[0][0]
   const reEndX = bezierCurve[3][0]
@@ -104,6 +160,12 @@ function getBezierCurvePointTFromReT (bezierCurve, t) {
   return tMinus / xMinus
 }
 
+/**
+ * @description Get the curve progress of t
+ * @param {Array} bezierCurve Sub-curve
+ * @param {Number} t          Current frame t
+ * @return {Number} Progress of current frame
+ */
 function getBezierCurveTState ([[, p0], [, p1], [, p2], [, p3]], t) {
   const { pow } = Math
 
@@ -120,6 +182,13 @@ function getBezierCurveTState ([[, p0], [, p1], [, p2], [, p3]], t) {
   return 1 - (result1 + result2 + result3 + result4)
 }
 
+/**
+ * @description Get transition state according to frame progress
+ * @param {Any} startState   Transition start state
+ * @param {Any} endState     Transition end state
+ * @param {Array} frameState Frame state progress
+ * @return {Array} Transition frame state
+ */
 function getTransitionState (begin, end, frameState) {
   let stateType = 'object'
 
@@ -133,12 +202,26 @@ function getTransitionState (begin, end, frameState) {
   return frameState.map(t => end)
 }
 
+/**
+ * @description Get the transition data of the number type
+ * @param {Number} startState Transition start state
+ * @param {Number} endState   Transition end state
+ * @param {Array} frameState  Frame state progress
+ * @return {Array} Transition frame state
+ */
 function getNumberTransitionState (begin, end, frameState) {
   const minus = end - begin
 
   return frameState.map(s => begin + minus * s)
 }
 
+/**
+ * @description Get the transition data of the array type
+ * @param {Array} startState Transition start state
+ * @param {Array} endState   Transition end state
+ * @param {Array} frameState Frame state progress
+ * @return {Array} Transition frame state
+ */
 function getArrayTransitionState (begin, end, frameState) {
   const minus = end.map((v, i) => {
     if (typeof v !== 'number') return false
@@ -154,6 +237,13 @@ function getArrayTransitionState (begin, end, frameState) {
     }))
 }
 
+/**
+ * @description Get the transition data of the object type
+ * @param {Object} startState Transition start state
+ * @param {Object} endState   Transition end state
+ * @param {Array} frameState  Frame state progress
+ * @return {Array} Transition frame state
+ */
 function getObjectTransitionState (begin, end, frameState) {
   const keys = Object.keys(end)
 
@@ -171,6 +261,13 @@ function getObjectTransitionState (begin, end, frameState) {
   })
 }
 
+/**
+ * @description Get the transition state data by recursion
+ * @param {Array|Object} startState Transition start state
+ * @param {Array|Object} endState   Transition end state
+ * @param {Array} frameState        Frame state progress
+ * @return {Array} Transition frame state
+ */
 function recursionTransitionState (begin, end, frameState) {
   const state = getTransitionState(begin, end, frameState)
 
@@ -188,14 +285,20 @@ function recursionTransitionState (begin, end, frameState) {
   return state
 }
 
-export function injectNewCurve (name, curve) {
-  if (!name || !curve) {
-    console.warn('injectNewCurve Missing Parameters!')
+/**
+ * @description Inject new curve into curves as config
+ * @param {Any} key     The key of curve
+ * @param {Array} curve Bezier curve data
+ * @return {Undefined} No return
+ */
+export function injectNewCurve (key, curve) {
+  if (!key || !curve) {
+    console.error('InjectNewCurve Missing Parameters!')
 
     return
   }
 
-  config.set(name, curve)
+  curves.set(key, curve)
 }
 
 export default transition
