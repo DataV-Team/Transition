@@ -29,7 +29,7 @@ Detailed documents and examples can be viewed on the [HomePage](http://transitio
 
 - [Annotation](#Annotation)
 - [Examples](#examples)
-- [Inject New Curve](#Inject -New-Curve)
+- [Inject New Curve](#Inject-New-Curve)
 - [Curve Table](#curve-table)
 
 ------
