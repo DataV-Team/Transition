@@ -24,7 +24,7 @@ function transition (tBC, startState = false, endState = false, frameNum = 30, d
   // If the recursion mode is not enabled or the state type is Number, the shallow state calculation is performed directly.
   if (!deep || typeof endState === 'number') return getTransitionState(startState, endState, frameStateProgress)
 
-  return recursionTransitionState(begin, end, frameState)
+  return recursionTransitionState(startState, endState, frameStateProgress)
 }
 
 /**
@@ -42,13 +42,13 @@ function checkParams (tBC, startState = false, endState = false, frameNum = 30) 
     return false
   }
 
-  if (typeof begin !== typeof end) {
+  if (typeof startState !== typeof endState) {
     console.error('Inconsistent Status Types!')
 
     return false
   }
 
-  const stateType = typeof begin
+  const stateType = typeof endState
 
   if (stateType === 'string' || stateType === 'boolean' || !tBC.length) {
     console.error('Unsupported Data Type of State!')
