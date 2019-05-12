@@ -6,8 +6,8 @@ const defaultTransitionBC = 'linear'
  * @description Get the N-frame animation state by the start and end state
  *              of the animation and the easing curve
  * @param {String|Array} tBC               Easing curve name or data
- * @param {Number|Arrya|Object} startState Animation start state
- * @param {Number|Arrya|Object} endState   Animation end state
+ * @param {Number|Array|Object} startState Animation start state
+ * @param {Number|Array|Object} endState   Animation end state
  * @param {Number} frameNum                Number of Animation frames
  * @param {Boolean} deep                   Whether to use recursive mode
  * @return {Array} State of each frame of the animation
