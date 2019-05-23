@@ -1,3 +1,9 @@
+# 1.1.6-alpha (2019-05-23)
+
+### Perfect
+
+- **core:** Add cacth to enhance compatibility (when the parameter exception causes an error, it returns directly to the "End State").
+
 # 1.1.5-alpha (2019-05-07)
 
 ### Bug Fixes
