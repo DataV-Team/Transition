@@ -15,16 +15,22 @@ const defaultTransitionBC = 'linear'
 function transition (tBC, startState = false, endState = false, frameNum = 30, deep = false) {
   if (!checkParams(...arguments)) return false
 
-  // Get the transition bezier curve
-  const bezierCurve = getBezierCurve(tBC)
+  try {
+    // Get the transition bezier curve
+    const bezierCurve = getBezierCurve(tBC)
 
-  // Get the progress of each frame state
-  const frameStateProgress = getFrameStateProgress(bezierCurve, frameNum)
+    // Get the progress of each frame state
+    const frameStateProgress = getFrameStateProgress(bezierCurve, frameNum)
 
-  // If the recursion mode is not enabled or the state type is Number, the shallow state calculation is performed directly.
-  if (!deep || typeof endState === 'number') return getTransitionState(startState, endState, frameStateProgress)
+    // If the recursion mode is not enabled or the state type is Number, the shallow state calculation is performed directly.
+    if (!deep || typeof endState === 'number') return getTransitionState(startState, endState, frameStateProgress)
 
-  return recursionTransitionState(startState, endState, frameStateProgress)
+    return recursionTransitionState(startState, endState, frameStateProgress)
+  } catch {
+    console.warn('Transition parameter may be abnormal!')
+
+    return [endState]
+  }
 }
 
 /**
