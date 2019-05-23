@@ -2,7 +2,7 @@
 
 ### Perfect
 
-- **core:** Add cacth to enhance compatibility (when the parameter exception causes an error, it returns directly to the "End State").
+- **core:** Add try cacth to enhance compatibility (when the parameter exception causes an error, it returns directly to the "End State").
 
 # 1.1.5-alpha (2019-05-07)
 
