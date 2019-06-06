@@ -1,3 +1,9 @@
+# 1.1.7-alpha (2019-06-06)
+
+### Perfect
+
+- **curve:** Optmization curve `easeOutCubic`.
+
 # 1.1.6-alpha (2019-05-23)
 
 ### Perfect
