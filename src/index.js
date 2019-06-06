@@ -306,3 +306,5 @@ export function injectNewCurve (key, curve) {
 
   curves.set(key, curve)
 }
+
+export default transition
