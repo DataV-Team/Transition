@@ -1,4 +1,4 @@
-import curves from './lib/curves'
+import curves from './config/curves'
 
 const defaultTransitionBC = 'linear'
 
@@ -12,7 +12,7 @@ const defaultTransitionBC = 'linear'
  * @param {Boolean} deep                   Whether to use recursive mode
  * @return {Array} State of each frame of the animation
  */
-function transition (tBC, startState = false, endState = false, frameNum = 30, deep = false) {
+export function transition (tBC, startState = false, endState = false, frameNum = 30, deep = false) {
   if (!checkParams(...arguments)) return false
 
   try {
@@ -306,5 +306,3 @@ export function injectNewCurve (key, curve) {
 
   curves.set(key, curve)
 }
-
-export default transition
