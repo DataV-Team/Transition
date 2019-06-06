@@ -1,3 +1,9 @@
+# 1.1.8-alpha (2019-06-06)
+
+### Perfect
+
+- **ES5:** Use babel to transcode to `ES5`.
+
 # 1.1.7-alpha (2019-06-06)
 
 ### Perfect
