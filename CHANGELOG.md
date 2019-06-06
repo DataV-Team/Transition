@@ -1,3 +1,9 @@
+# 1.1.9-alpha (2019-06-06)
+
+### Bug Fixes
+
+- **core:** Default export exception.
+
 # 1.1.8-alpha (2019-06-06)
 
 ### Perfect
