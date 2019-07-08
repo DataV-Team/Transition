@@ -1,4 +1,4 @@
-[ENGLISH](./README.md)
+[中文](./README_CN.md)
 
 <h1 align="center">Transition</h1>
 
@@ -8,27 +8,27 @@
     <a href="https://www.npmjs.com/package/@jiaminghi/transition"><img src="https://img.shields.io/npm/v/@jiaminghi/transition.svg" alt="LICENSE" /> </a>
 </p>
 
-### Transition是什么?
+### What is Transition?
 
-- 它是一个基于**贝塞尔曲线**的动效插件。
-- 它提供常用的**缓动曲线**。
-- 支持**自定义**缓动曲线。
+- It is a dynamic effect plugin based on **Bezier Curve**.
+- It provides common **easing** curve.
+- **Customizable** easing curve.
 
-### 动画是如何产生的?
+### How is the animation produced?
 
-* 获取一帧动画数据
-* 根据动画数据渲染图像
-* 重复...
+* Get one frame data of the animation.
+* Draw this frame animation.
+* Repeat...
 
-我们可以使用三组数据去描述一段动画（**动画起始状态**、**动画结束状态**、**缓动曲线**），根据这三组数据我们可以计算出动画过程中每一帧动画的状态。这就是***Transition***所提供的功能，根据每一帧动画的状态，我们不断的进行重绘，动画就产生了。
+We can use three sets of data to describe an animation (**animation start state**, **animation end state**, **easing curve**).Based on these three sets of data, we can calculate the **state of each frame** of the animation,this is what ***Transition*** provided.According to the data of each frame, we carry out continuous redrawing, and the animation is generated.
 
-### npm安装
+### Install with npm
 
 ```shell
 $ npm install @jiaminghi/transition
 ```
 
-### 使用
+### Use
 
 ```javascript
 import { transition, injectNewCurve } from '@jiaminghi/transition'
@@ -36,34 +36,35 @@ import { transition, injectNewCurve } from '@jiaminghi/transition'
 // do something
 ```
 
-详细文档及示例请移步[HomePage](http://transition.jiaminghi.com).
+Detailed documents and examples can be viewed on the [HomePage](http://transition.jiaminghi.com).
 
-- [注解](#注解)
-- [示例](#示例)
-- [扩展新曲线](#扩展新曲线)
-- [缓动曲线表](#缓动曲线表)
+- [Annotation](#Annotation)
+- [Examples](#examples)
+- [Extend New Easing Curve](#Extend-New-Easing-Curve)
+- [Easing Curve Table](#Easing-curve-table)
 
 ------
 
-<h3 align="center">注解</h3>
+<h3 align="center">Annotation</h3>
 
 ```javascript
 /**
- * @description 根据动画起止状态及缓动曲线获取若干帧动画状态数据
- * @param {String|Array} tBC               缓动曲线名称或曲线数据
- * @param {Number|Arrya|Object} startState 动画起始状态
- * @param {Number|Arrya|Object} endState   动画结束状态
- * @param {Number} frameNum                动画帧数
- * @param {Boolean} deep                   是否启用递归模式
- * @return {Array} 每一帧的动画数据
+ * @description Get the N-frame animation state by the start and end state
+ *              of the animation and the easing curve
+ * @param {String|Array} tBC               Easing curve name or data
+ * @param {Number|Arrya|Object} startState Animation start state
+ * @param {Number|Arrya|Object} endState   Animation end state
+ * @param {Number} frameNum                Number of Animation frames
+ * @param {Boolean} deep                   Whether to use recursive mode
+ * @return {Array} State of each frame of the animation
  */
-function transition (tBC, startState = null, endState = null, frameNum = 30, deep = false) {  // ...
+function transition (tBC, startState = false, endState = false, frameNum = 30, deep = false) {  // ...
 }
 ```
 
-<h3 align="center">示例</h3>
+<h3 align="center">Examples</h3>
 
-**Transition** 支持三种数据类型以描述动画状态.
+**Transition** provides three data types to describe the animation state.
 
 * [Number](#Number)
 * [Array](#Array)
@@ -132,7 +133,7 @@ const animationState = transition('linear', objectBeginState, objectEndState, 5)
 
 #### Recursive
 
-启用递归模式以计算`Array`或`Object`中的深层数据.
+Use recursive mode to calculate deep data in `Array` or `Object`.
 
 ```javascript
 import transition from '@jiaminghi/transition'
@@ -174,27 +175,27 @@ const animationState = transition('linear', beginState, endState, 3, true)
 
 **Notice**
 
-* 非数值的属性或元素不参与计算过程.
-* 起始状态与结束状态的数据类型（包括属性及元素的数量）必须保持一致.
+* Non-Number attribute or element does not participate in calculations.
+* The data type of the start and end state should be consistent（Including the number of attributes and elements）.
 
-<h3 align="center">扩展新曲线</h3>
+<h3 align="center">Extend New Easing Curve</h3>
 
-如果你想扩展新的缓动曲线，你可以使用`Transition`提供的`injectNewCurve`方法去扩展。
+If you want to extend the new **easing curve**, you can use the `injectNewCurve` method provided by `Transition` to extend.
 
 ```javascript
 import { injectNewCurve } from '@jiaminghi/transition'
 
 const curveName = 'linear'
 
-// 可以使用绘制工具获得
+// Can be obtained by drawing tools
 const bezierCurve = [[[0, 1]],[[1, 0]]]
 
 injectNewCurve(curveName, bezierCurve)
 ```
 
-[缓动曲线绘制工具](http://transition.jiaminghi.com/draw/)
+[Easing curve drawing tool](http://transition.jiaminghi.com/draw/)
 
-<h3 align="center">缓动曲线表</h3>
+<h3 align="center">Easing Curve Table</h3>
 
 * [linear](#linear)
 * [easeInSine](#easeInSine)
