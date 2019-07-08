@@ -10,9 +10,9 @@ const defaultTransitionBC = 'linear'
  * @param {Number|Array|Object} endState   Animation end state
  * @param {Number} frameNum                Number of Animation frames
  * @param {Boolean} deep                   Whether to use recursive mode
- * @return {Array} State of each frame of the animation
+ * @return {Array|Boolean} State of each frame of the animation (Invalid input will return false)
  */
-export function transition (tBC, startState = false, endState = false, frameNum = 30, deep = false) {
+export function transition (tBC, startState = null, endState = null, frameNum = 30, deep = false) {
   if (!checkParams(...arguments)) return false
 
   try {
@@ -43,13 +43,13 @@ export function transition (tBC, startState = false, endState = false, frameNum 
  */
 function checkParams (tBC, startState = false, endState = false, frameNum = 30) {
   if (!tBC || startState === false || endState === false || !frameNum) {
-    console.error('Transition Missing Parameters!')
+    console.error('transition: Missing Parameters!')
 
     return false
   }
 
   if (typeof startState !== typeof endState) {
-    console.error('Inconsistent Status Types!')
+    console.error('transition: Inconsistent Status Types!')
 
     return false
   }
@@ -57,13 +57,13 @@ function checkParams (tBC, startState = false, endState = false, frameNum = 30) 
   const stateType = typeof endState
 
   if (stateType === 'string' || stateType === 'boolean' || !tBC.length) {
-    console.error('Unsupported Data Type of State!')
+    console.error('transition: Unsupported Data Type of State!')
 
     return false
   }
 
   if (!curves.has(tBC) && !(tBC instanceof Array)) {
-    console.warn('Transition curve not found, default curve will be used!')
+    console.warn('transition: Transition curve not found, default curve will be used!')
   }
 
   return true
