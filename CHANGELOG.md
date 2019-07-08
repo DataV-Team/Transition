@@ -1,3 +1,9 @@
+# 1.1.10-alpha (2019-07-08)
+
+### Perfect
+
+- **core:** Do some optimizations.
+
 # 1.1.9-alpha (2019-06-06)
 
 ### Bug Fixes
