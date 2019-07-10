@@ -36,7 +36,7 @@ import { transition, injectNewCurve } from '@jiaminghi/transition'
 // do something
 ```
 
-Detailed documents and examples can be viewed on the [HomePage](http://transition.jiaminghi.com).
+Detailed documents and examples can be viewed on the [HomePage](http://transition.jiaminghi.com/EN/).
 
 - [Annotation](#Annotation)
 - [Examples](#examples)
@@ -193,7 +193,7 @@ const bezierCurve = [[[0, 1]],[[1, 0]]]
 injectNewCurve(curveName, bezierCurve)
 ```
 
-[Easing curve drawing tool](http://transition.jiaminghi.com/draw/)
+[Easing curve drawing tool](http://transition.jiaminghi.com/EN/draw/)
 
 <h3 align="center">Easing Curve Table</h3>
 
