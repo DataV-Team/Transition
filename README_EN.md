@@ -1,4 +1,4 @@
-[中文](./README_CN.md)
+[中文](./README.md)
 
 <h1 align="center">Transition</h1>
 
