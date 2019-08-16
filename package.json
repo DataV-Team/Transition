@@ -9,8 +9,8 @@
     "url": "https://github.com/jiaming743/Transition.git"
   },
   "scripts": {
-    "compile": "babel -d lib/ src/",
-    "prepublish": "npm run compile",
+    "build": "node build/index.js",
+    "prepublish": "npm run build",
     "test": "mocha"
   },
   "license": "MIT",
@@ -24,10 +24,11 @@
   ],
   "homepage": "https://github.com/jiaming743/transition#readme",
   "devDependencies": {
-    "@babel/cli": "^7.4.4",
-    "@babel/core": "^7.4.5",
-    "@babel/preset-env": "^7.4.5",
+    "@babel/cli": "^7.5.0",
+    "@babel/core": "^7.5.4",
+    "@babel/preset-env": "^7.5.4",
     "@babel/register": "^7.4.4",
+    "@jiaminghi/fs": "0.0.2",
     "chai": "^4.2.0",
     "mocha": "^6.1.4"
   },
