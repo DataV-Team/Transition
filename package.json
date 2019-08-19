@@ -11,6 +11,7 @@
   "scripts": {
     "build": "node build/index.js",
     "prepublish": "npm run build",
+    "deploy": "node deploy/index.js",
     "test": "mocha"
   },
   "license": "MIT",
@@ -28,7 +29,8 @@
     "@babel/core": "^7.5.4",
     "@babel/preset-env": "^7.5.4",
     "@babel/register": "^7.4.4",
-    "@jiaminghi/fs": "0.0.2",
+    "@jiaminghi/fs": "^0.0.2",
+    "ftp": "^0.3.10",
     "chai": "^4.2.0",
     "mocha": "^6.1.4"
   },
