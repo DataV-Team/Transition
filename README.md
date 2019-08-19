@@ -46,7 +46,7 @@ import { transition, injectNewCurve } from '@jiaminghi/transition'
 <script src="http://lib.jiaminghi.com/transition/transition.min.js"></script>
 <script>
 	const transitionFun =  transition.transition
-    // do something
+  // do something
 </script>
 ```
 
