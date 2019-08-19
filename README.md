@@ -36,6 +36,20 @@ import { transition, injectNewCurve } from '@jiaminghi/transition'
 // do something
 ```
 
+### 快速体验
+
+```html
+<!--资源位于个人服务器仅供体验和测试，请勿在生产环境使用-->
+<!--调试版-->
+<script src="http://lib.jiaminghi.com/transition/transition.map.js"></script>
+<!--压缩版-->
+<script src="http://lib.jiaminghi.com/transition/transition.min.js"></script>
+<script>
+	const transitionFun =  transition.transition
+    // do something
+</script>
+```
+
 详细文档及示例请移步[HomePage](http://transition.jiaminghi.com).
 
 - [注解](#注解)

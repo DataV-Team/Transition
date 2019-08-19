@@ -36,6 +36,20 @@ import { transition, injectNewCurve } from '@jiaminghi/transition'
 // do something
 ```
 
+### Quick experience
+
+```html
+<!--Resources are located on personal servers for experience and testing only, do not use in production environments-->
+<!--Debug version-->
+<script src="http://lib.jiaminghi.com/transition/transition.map.js"></script>
+<!--Compression version-->
+<script src="http://lib.jiaminghi.com/transition/transition.min.js"></script>
+<script>
+	const transitionFun =  transition.transition
+    // do something
+</script>
+```
+
 Detailed documents and examples can be viewed on the [HomePage](http://transition.jiaminghi.com/EN/).
 
 - [Annotation](#Annotation)
