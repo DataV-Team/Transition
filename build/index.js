@@ -41,6 +41,16 @@ async function start () {
     return
   }
 
+  print.tip('After browserify! (transition.min.js)')
+
+  const uglifyjs = await exec('uglifyjs dist/transition.min.js -o dist/transition.min.js')
+
+  if (!uglifyjs) {
+    print.error('Exception in uglifyjs')
+
+    return
+  }
+
   print.success('DONE!')
 }
 
