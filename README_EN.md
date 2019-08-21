@@ -45,8 +45,8 @@ import { transition, injectNewCurve } from '@jiaminghi/transition'
 <!--Compression version-->
 <script src="http://lib.jiaminghi.com/transition/transition.min.js"></script>
 <script>
-  console.log(transition)
-  // { transition, injectNewCurve }
+  const { transition, injectNewCurve } = window.transition
+  // do something
 </script>
 ```
 
