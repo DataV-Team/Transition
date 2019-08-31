@@ -307,4 +307,28 @@ export function injectNewCurve (key, curve) {
   curves.set(key, curve)
 }
 
+/**
+ * @description Perform an animation callback using requestAnimationFrame
+ *              Automatically pass keyframe status
+ * @param {Array<Array|Object|Number>} states State set returned by transition
+ * @param {Function} callback                 Animation callback
+ * @param {Number} frameIndex                 Starting animation state index
+ * @return {Undefined} Void
+ */
+export function animator (states, callback, frameIndex = 0) {
+  if (!states || !(states instanceof Array) || !callback || typeof callback !== 'function') {
+    console.error('InjectNewCurve Missing Parameters or incorrect parameter type!')
+
+    return false
+  }
+
+  if (frameIndex >= states.length) return
+
+  const currentState = states[frameIndex]
+
+  callback(currentState, frameIndex)
+
+  requestAnimationFrame(animator.bind(this, states, callback, ++frameIndex))
+}
+
 export default transition
