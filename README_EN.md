@@ -3,9 +3,9 @@
 <h1 align="center">Transition</h1>
 
 <p align="center">
-    <a href="https://travis-ci.com/jiaming743/transition"><img src="https://img.shields.io/travis/com/jiaming743/transition.svg" alt="Travis CI"></a>
-    <a href="https://github.com/jiaming743/transition/blob/master/LICENSE"><img src="https://img.shields.io/github/license/jiaming743/transition.svg" alt="LICENSE" /> </a>
-    <a href="https://www.npmjs.com/package/@jiaminghi/transition"><img src="https://img.shields.io/npm/v/@jiaminghi/transition.svg" alt="LICENSE" /> </a>
+    <a href="https://travis-ci.com/DataV-Team/transition"><img src="https://img.shields.io/travis/com/DataV-Team/transition.svg" alt="Travis CI"></a>
+    <a href="https://github.com/DataV-Team/transition/blob/master/LICENSE"><img src="https://img.shields.io/github/license/DataV-Team/transition.svg" alt="LICENSE" /> </a>
+    <a href="https://www.npmjs.com/package/@jiaminghi/transition"><img src="https://img.shields.io/npm/v/@jiaminghi/transition.svg" alt="VERSION" /> </a>
 </p>
 
 ### What is Transition?
