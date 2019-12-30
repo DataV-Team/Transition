@@ -4,11 +4,21 @@
   "author": "JiaMing <743192023@qq.com>",
   "description": "Dynamic effect plugin based Bezier Curve",
   "main": "lib/index.js",
+  "types": "lib/index.d.ts",
   "repository": {
     "type": "git",
     "url": "https://github.com/DataV-Team/Transition.git"
   },
+  "watch": {
+    "eslint": {
+      "patterns": ["src"],
+      "extensions": ["ts"]
+    }
+  },
   "scripts": {
+    "dev": "npm-watch eslint",
+    "eslint": "eslint src --fix --ext .ts",
+    "tsc": "tsc",
     "build": "node build/index.js",
     "prepublish": "npm run build",
     "deploy": "node deploy/index.js",
@@ -25,17 +35,14 @@
   ],
   "homepage": "https://github.com/DataV-Team/transition#readme",
   "devDependencies": {
-    "@babel/cli": "^7.4.4",
-    "@babel/core": "^7.4.5",
-    "@babel/preset-env": "^7.5.5",
-    "@babel/plugin-transform-runtime": "^7.5.5",
-    "@babel/register": "^7.4.4",
     "@jiaminghi/fs": "^0.0.2",
-    "ftp": "^0.3.10",
+    "@typescript-eslint/eslint-plugin": "^2.11.0",
+    "@typescript-eslint/parser": "^2.11.0",
     "chai": "^4.2.0",
-    "mocha": "^6.1.4"
-  },
-  "dependencies": {
-    "@babel/runtime": "^7.5.5"
+    "eslint": "^6.7.2",
+    "ftp": "^0.3.10",
+    "mocha": "^6.1.4",
+    "npm-watch": "^0.6.0",
+    "typescript": "^3.7.3"
   }
 }
