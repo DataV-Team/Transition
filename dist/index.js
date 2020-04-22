@@ -1,6 +1,8 @@
-'use strict';
-
-Object.defineProperty(exports, '__esModule', { value: true });
+(function (global, factory) {
+typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
+typeof define === 'function' && define.amd ? define(['exports'], factory) :
+(global = global || self, factory(global.Transition = {}));
+}(this, (function (exports) { 'use strict';
 
 /*! *****************************************************************************
 Copyright (c) Microsoft Corporation. All rights reserved.
@@ -458,3 +460,7 @@ function transition(dynamic, startState, endState, frameNum, deep) {
 
 exports.extendCurves = extendCurves;
 exports.transition = transition;
+
+Object.defineProperty(exports, '__esModule', { value: true });
+
+})));

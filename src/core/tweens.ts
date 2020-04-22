@@ -1,4 +1,4 @@
-import { Tween, TweenName } from 'types/tweens'
+import { Tween, TweenName } from '../types/tweens'
 
 /**
  * @description Linear
@@ -256,11 +256,13 @@ export const tweens = new Map<TweenName, Tween>([
 export function getFrameStateProgressByTween(tweenName: TweenName, frameNum = 30): number[] {
   const [startState, changeValue] = [0, 1]
 
+  const tGap = frameNum / (frameNum - 1)
+
   const tweenFun = tweens.get(tweenName)!
 
   return new Array(frameNum)
     .fill(0)
-    .map((_, i) => tweenFun(i + 1, startState, changeValue, frameNum))
+    .map((_, i) => tweenFun(i * tGap, startState, changeValue, frameNum))
 }
 
 export default getFrameStateProgressByTween

@@ -1,4 +1,4 @@
-import { TransitionCurve, TransitionCurveSegment, BezierCurve } from 'types/curves'
+import { TransitionCurve, TransitionCurveSegment, BezierCurve } from '../types/curves'
 
 export const curves = new Map<string, TransitionCurve>([])
 
@@ -77,23 +77,23 @@ function getBezierCurveTProgress([[, p0], [, p1], [, p2], [, p3]]: BezierCurve, 
 
 /**
  * @description Get frame progress at time t
- * @param {TCurve} bezierCurve Transition bezier curve
- * @param {Number} t           Current frame t
- * @return {Number} Progress of frame
+ * @param {TransitionCurve} transitionCurve Transition bezier curve
+ * @param {number} t                        Current frame t
+ * @return {number} Progress of frame
  */
 function getFrameProgressByT(transitionCurve: TransitionCurve, t: number): number {
   const bezierCurve = getBezierCurveByT(transitionCurve, t)
 
-  const bezierCurvePointT = getBezierCurveRelativeT(bezierCurve, t)
+  const relativeT = getBezierCurveRelativeT(bezierCurve, t)
 
-  return getBezierCurveTProgress(bezierCurve, bezierCurvePointT)
+  return getBezierCurveTProgress(bezierCurve, relativeT)
 }
 
 /**
  * @description Get frame state progress by curve
- * @param {String|TCurve} curve Curve name or easing curve data
- * @param {Number} frameNum      Frame number
- * @return {Number[]} Frame state progress
+ * @param {TransitionCurve|string} curve Transition curve or curve name extended
+ * @param {number} frameNum              Frame number
+ * @return {number[]} Frame state progress
  */
 export function getFrameStateProgressByCurve(
   curve: TransitionCurve | string,
@@ -108,25 +108,25 @@ export function getFrameStateProgressByCurve(
   }
 
   const tGap = 1 / (frameNum - 1)
-  const tState = new Array(frameNum).fill(0).map((t, i) => i * tGap)
+  const tState = new Array(frameNum).fill(0).map((_, i) => i * tGap)
 
   return tState.map(t => getFrameProgressByT(targetCurve, t))
 }
 
 /**
- * @description Inject new curve into curves as config
- * @param {String} curveName The key of curve
- * @param {TCurve} curve     Bezier curve data
- * @return {Boolean} Result
+ * @description Extend curves (add new transition curve into curves)
+ * @param {string} curveName      Curve name
+ * @param {TransitionCurve} curve Transition curve
+ * @return {boolean} Result
  */
-export function injectNewCurve(curveName: string, curve: TransitionCurve): boolean {
-  if (!curveName || !curve) {
-    console.error('InjectNewCurve Missing Parameters!')
+export function extendCurves(curveName: string, transitionCurve: TransitionCurve): boolean {
+  if (!curveName || !transitionCurve) {
+    console.error('InjectNewCurve: Missing Parameters!')
 
     return false
   }
 
-  curves.set(curveName, curve)
+  curves.set(curveName, transitionCurve)
 
   return true
 }

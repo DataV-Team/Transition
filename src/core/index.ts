@@ -1,31 +1,29 @@
-import { injectNewCurve, getFrameStateProgressByCurve, curves, TCurve } from './curves'
-import { getFrameStateProgressByTween, tweens, TTweenName } from './tweens'
+import { extendCurves, getFrameStateProgressByCurve, curves } from './curves'
+import { getFrameStateProgressByTween, tweens } from './tweens'
+import { TweenName } from '../types/tweens'
+import { Calculator, Dynamic, DynamicType } from '../types'
 
-type TGetFrameStateProgress = (
-  dynamic: string | TCurve,
-  frameNum: number,
-  defaultDynamic: TTweenName
-) => number[]
+export function dynamicValidator(dynamic: Dynamic): DynamicType {
+  const isArray = dynamic instanceof Array
+  const isCurve = curves.has(dynamic as string)
+  const isTween = tweens.has(dynamic as TweenName)
 
-export const getFrameStateProgress: TGetFrameStateProgress = (
-  dynamic,
-  frameNum,
-  defaultDynamic
-) => {
-  let validDynamic = true
+  if (isArray) return 'transitionCurve'
+  if (isCurve) return 'transitionCurveName'
+  if (isTween) return 'tween'
 
-  if (typeof dynamic !== 'string' && !(dynamic instanceof Array)) validDynamic = false
+  throw new Error(`Transition: Invalid dynamic of ${dynamic}`)
+}
 
-  if (typeof dynamic === 'string' && !curves.get(dynamic) && !tweens.get(dynamic))
-    validDynamic = false
+export function getFrameStateProgress(dynamic: Dynamic, frameNum = 30): number[] {
+  const dynamicType = dynamicValidator(dynamic)
 
-  if (!validDynamic) dynamic = defaultDynamic
-
-  const calculator: Function = tweens.get(dynamic as string) || getFrameStateProgressByCurve
+  const calculator: Calculator =
+    dynamicType === 'tween' ? getFrameStateProgressByTween : getFrameStateProgressByCurve
 
   return calculator(dynamic, frameNum)
 }
 
-export { injectNewCurve, getFrameStateProgressByCurve, getFrameStateProgressByTween }
+export { extendCurves, getFrameStateProgressByCurve, getFrameStateProgressByTween }
 
 export default getFrameStateProgress

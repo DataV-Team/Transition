@@ -1,231 +1,114 @@
-import { injectNewCurve, getFrameStateProgress } from './core'
-import { curves } from './core/curves'
-import { tweens } from './core/tweens'
-import { TCurve } from './core/curves'
+import { dynamicValidator, getFrameStateProgress, extendCurves } from './core'
+import { Dynamic } from './types'
 
-type TDynamic = string | TCurve
-
-/**
- * @description Get target type
- * @param {Any} target Target
- * @return {String} Target type
- */
-type TGetType = (target: any) => string
-
-const getType: TGetType = target => {
+// eslint-disable-next-line
+function getType(target: any): string {
   return Object.prototype.toString
     .call(target)
     .replace(/\[object |\]/g, '')
     .toLowerCase()
 }
 
-/**
- * @description Check if the parameters are legal
- * @param {TDynamic} dynamic Dynamic curve name or data
- * @param {Any} startState   Transition start state
- * @param {Any} endState     Transition end state
- * @param {Number} frameNum  Number of transition frames
- * @return {Boolean} Is the parameter legal
- */
-type TCheckParams = <T>(dynamic: TDynamic, starState: T, endState: T, frameNum: number) => boolean
+// eslint-disable-next-line
+function isNumber(target: any): boolean {
+  return Number.isFinite(target)
+}
 
-const checkParams: TCheckParams = (dynamic, startState, endState, frameNum) => {
-  const [starStateType, endStateType] = [typeof startState, typeof endState]
+// eslint-disable-next-line
+function recursiveAble(target: any): boolean {
+  const type = getType(target)
 
-  if (
-    typeof dynamic === 'undefined' ||
-    starStateType === 'undefined' ||
-    endStateType === 'undefined'
-  ) {
-    console.error('transition: Missing Parameters!')
+  return type === 'array' || type === 'object'
+}
 
-    return false
-  }
+// eslint-disable-next-line
+function transitionAble(startState: any): boolean {
+  const stateType = getType(startState)
 
-  if (typeof frameNum !== 'number') {
-    console.error('transition: frameNum should be of type number!')
+  return ['number', 'array', 'object'].includes(stateType)
+}
 
-    return false
-  }
+// eslint-disable-next-line
+function asNumber(target: any): number {
+  return target
+}
 
-  if (starStateType !== typeof endStateType) {
-    console.error('transition: Inconsistent Status Types!')
+function createTargetArray<T>(target: T, num: number): T[] {
+  return new Array(num).fill(0).map(_ => target)
+}
 
-    return false
-  }
+// eslint-disable-next-line
+function updateTargetValues<T = any>(target: T[], values: any[], key: string): T[] {
+  // eslint-disable-next-line
+  target.forEach((_: any, i) => (_[key] = values[i]))
 
-  if (
-    (typeof dynamic === 'string' && !curves.has(dynamic) && !tweens.has(dynamic)) ||
-    !(dynamic instanceof Array)
-  ) {
-    console.warn(
-      'transition: Transition dynamic curve not found, default dynamic curve will be used!'
-    )
-  }
+  return target
+}
+
+function createInitState(isArray: boolean): [] | {} {
+  return isArray ? [] : {}
+}
+
+function getTransitionState(start: number, end: number, frameStateProgress: number[]): number[] {
+  const minus = end - start
+
+  return frameStateProgress.map(s => start + minus * s)
+}
+
+function validator<T>(dynamic: Dynamic, startState: T, endState: T, frameNum: number): true {
+  const argTypes = [dynamic, startState, endState, frameNum].map(getType)
+
+  if (argTypes.find(_ => _ === 'undefined')) throw new Error('transition: Missing Parameters!')
+
+  if (argTypes[1] !== argTypes[2])
+    throw new Error('transition: The start state type and the end state type are inconsistent!')
+
+  if (argTypes[3] !== 'number' || frameNum <= 0)
+    throw new Error(`Transition: frameNum should be a number and greater than 1`)
+
+  dynamicValidator(dynamic)
 
   return true
 }
 
-/**
- * @description Get the transition data of the number type
- * @param {Number} startState           Transition start state
- * @param {Number} endState             Transition end state
- * @param {Number[]} frameStateProgress Frame state progress
- * @return {Array} Transition frame state
- */
-type TGetNumberTransitionState = <T extends number>(
-  starState: T,
-  endState: T,
-  frameStateProgress: number[]
-) => number[]
-
-const getNumberTransitionState: TGetNumberTransitionState = (
-  startState,
-  endState,
-  frameStateProgress
-) => {
-  const minus = endState - startState
-
-  return frameStateProgress.map(s => startState + minus * s)
-}
-
-/**
- * @description Get the transition data of the array type
- * @param {any[]} startState            Transition start state
- * @param {any[]} endState              Transition end state
- * @param {Number[]} frameStateProgress Frame state progress
- * @return {Array} Transition frame state
- */
-type TGetArrayTransitionState = <T extends any[]>(
+function recursiveTransition<T>(
   startState: T,
   endState: T,
-  frameStateProgress: number[]
-) => T[]
-
-const getArrayTransitionState: TGetArrayTransitionState = (
-  startState,
-  endState,
-  frameStateProgress
-) => {
-  const minus = endState.map((v, i) => {
-    if (typeof v !== 'number') return false
-
-    return v - startState[i]
-  })
-
-  return frameStateProgress.map(s =>
-    minus.map((v, i) => {
-      if (v === false) return endState[i]
-
-      return startState[i] + v * s
-    })
-  ) as typeof endState[]
-}
-
-interface StringPropNameObject {
-  [propName: string]: any
-}
-
-/**
- * @description Get the transition data of the object type
- * @param {Object} startState           Transition start state
- * @param {Object} endState             Transition end state
- * @param {Number[]} frameStateProgress Frame state progress
- * @return {Array} Transition frame state
- */
-type TGetObjectTransitionState = <T extends StringPropNameObject>(
-  startState: T,
-  endState: T,
-  frameStateProgress: number[]
-) => T[]
-
-const getObjectTransitionState: TGetObjectTransitionState = (
-  startState,
-  endState,
-  frameStateProgress
-) => {
-  const keys = Object.keys(endState)
-
-  const startValue = keys.map(k => startState[k])
-  const endValue = keys.map(k => endState[k])
-
-  const arrayState = getArrayTransitionState<typeof startValue>(
-    startValue,
-    endValue,
-    frameStateProgress
-  )
-
-  return arrayState.map(item => {
-    const frameData: any = {}
-
-    item.forEach((v, i) => (frameData[keys[i]] = v))
-
-    return frameData
-  })
-}
-
-/**
- * @description Get transition state according to frame progress
- * @param {Any} startState              Transition start state
- * @param {Any} endState                Transition end state
- * @param {Number[]} frameStateProgress Frame state progress
- * @return {Array} Transition frame state
- */
-type TGetTransitionState = <T>(startState: T, endState: T, frameStateProgress: number[]) => T[]
-
-const getTransitionState: TGetTransitionState = (startState, endState, frameStateProgress) => {
+  frameStateProgress: number[],
+  deep: boolean
+): T[] {
   const stateType = getType(startState)
+  const { length } = frameStateProgress
 
   if (stateType === 'number')
-    return (getNumberTransitionState(
-      (startState as unknown) as number,
-      (endState as unknown) as number,
+    return (getTransitionState(
+      asNumber(startState),
+      asNumber(endState),
       frameStateProgress
-    ) as unknown[]) as typeof startState[]
-  if (stateType === 'array')
-    return (getArrayTransitionState(
-      (startState as unknown) as any[],
-      (endState as unknown) as any[],
-      frameStateProgress
-    ) as unknown[]) as typeof startState[]
-  if (stateType === 'object')
-    return getObjectTransitionState(startState, endState, frameStateProgress)
+    ) as unknown) as T[]
 
-  return frameStateProgress.map(() => endState)
-}
-
-/**
- * @description Get the transition state data by recursion
- * @param {Array|Object} startState     Transition start state
- * @param {Array|Object} endState       Transition end state
- * @param {Number[]} frameStateProgress Frame state progress
- * @return {Array} Transition frame state
- */
-type TRecursionTransitionState = <T>(
-  startState: T,
-  endState: T,
-  frameStateProgress: number[]
-) => T[]
-
-const recursionTransitionState: TRecursionTransitionState = (
-  startState,
-  endState,
-  frameStateProgress
-) => {
-  const state = getTransitionState<typeof startState>(startState, endState, frameStateProgress)
+  const isArray = stateType === 'array'
+  let state = new Array(length).fill(isArray).map(createInitState)
 
   for (const key in endState) {
-    const bTemp = startState[key]
-    const eTemp = endState[key]
+    const start = startState[key]
+    const end = endState[key]
 
-    if (typeof eTemp !== 'object') continue
+    // eslint-disable-next-line
+    let keyState: any[] = []
 
-    const data = recursionTransitionState(bTemp, eTemp, frameStateProgress)
+    if (isNumber(start) && isNumber(end)) {
+      keyState = getTransitionState(asNumber(start), asNumber(end), frameStateProgress)
+    } else if (recursiveAble(start) && recursiveAble(end) && deep) {
+      keyState = recursiveTransition(start, end, frameStateProgress, deep)
+    } else {
+      keyState = createTargetArray(end, length)
+    }
 
-    state.forEach((fs: any, i: any) => (fs[key] = data[i]))
+    state = updateTargetValues(state, keyState, key)
   }
 
-  return state
+  return (state as unknown) as T[]
 }
 
 /**
@@ -238,35 +121,31 @@ const recursionTransitionState: TRecursionTransitionState = (
  * @param {Boolean} deep     Whether to use recursive mode
  * @return {Array|Boolean} State of each frame of the animation (Invalid input will return false)
  */
-type TTransition = <T>(
-  dynamic: TDynamic,
-  starState: T,
+
+function transition<T>(
+  dynamic: Dynamic,
+  startState: T,
   endState: T,
-  frameNum: number,
-  deep: boolean
-) => T[]
+  frameNum = 30,
+  deep = false
+): T[] {
+  validator(dynamic, startState, endState, frameNum)
 
-const transition: TTransition = (dynamic, startState, endState, frameNum = 30, deep = false) => {
-  if (!checkParams(dynamic, startState, endState, frameNum)) return [endState]
+  if (!transitionAble(startState)) {
+    console.warn('Transition: Only supports array number and object types')
 
-  const stateType = getType(startState)
-
-  if (stateType !== 'number' && stateType !== 'array' && stateType !== 'object')
-    return new Array(frameNum).fill(endState)
+    return [startState, endState]
+  }
 
   try {
-    const frameStateProgress = getFrameStateProgress(dynamic, frameNum, 'linear')
+    const frameStateProgress = getFrameStateProgress(dynamic, frameNum)
 
-    // If the recursion mode is not enabled or the state type is Number, the shallow state calculation is performed directly.
-    if (!deep || typeof endState === 'number')
-      return getTransitionState(startState, endState, frameStateProgress)
-
-    return recursionTransitionState(startState, endState, frameStateProgress)
+    return recursiveTransition(startState, endState, frameStateProgress, deep)
   } catch {
-    console.warn('Transition parameter may be abnormal!')
+    console.warn('Transition: parameter may be abnormal!')
 
     return [endState]
   }
 }
 
-export { injectNewCurve, transition }
+export { extendCurves, transition }

@@ -1,16 +1,48 @@
-import _typeof from '@babel/runtime/helpers/esm/typeof';
+/*! *****************************************************************************
+Copyright (c) Microsoft Corporation. All rights reserved.
+Licensed under the Apache License, Version 2.0 (the "License"); you may not use
+this file except in compliance with the License. You may obtain a copy of the
+License at http://www.apache.org/licenses/LICENSE-2.0
+
+THIS CODE IS PROVIDED ON AN *AS IS* BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, EITHER EXPRESS OR IMPLIED, INCLUDING WITHOUT LIMITATION ANY IMPLIED
+WARRANTIES OR CONDITIONS OF TITLE, FITNESS FOR A PARTICULAR PURPOSE,
+MERCHANTABLITY OR NON-INFRINGEMENT.
+
+See the Apache Version 2.0 License for specific language governing permissions
+and limitations under the License.
+***************************************************************************** */
+
+var __assign = function() {
+    __assign = Object.assign || function __assign(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
 
 var curves = new Map([]);
+/**
+ * @description Get bezier curve by t
+ * @param {TransitionCurve} transitionCurve transition curve
+ * @param {number} t                        Current frame t
+ * @return {BezierCurve} Bezier Curve
+ */
 
-var getBezierCurveSegmentByT = function getBezierCurveSegmentByT(bezierCurve, t) {
-  var lastIndex = bezierCurve.length - 1;
-  var begin, end;
+function getBezierCurveByT(transitionCurve, t) {
+  var curveNum = transitionCurve.length;
+  var lastIndex = curveNum - 1;
+  var begin;
+  var end;
 
-  for (var i = 0, segmentNum = bezierCurve.length; i < segmentNum; i++) {
+  for (var i = 0; i < curveNum; i++) {
     if (i === lastIndex) continue;
-    var segment = bezierCurve[i];
+    var segment = transitionCurve[i];
     begin = segment;
-    end = bezierCurve[i + 1];
+    end = transitionCurve[i + 1];
     var currentMainPointX = begin[0][0];
     var nextMainPointX = end[0][0];
     if (t >= currentMainPointX && t < nextMainPointX) break;
@@ -21,17 +53,31 @@ var getBezierCurveSegmentByT = function getBezierCurveSegmentByT(bezierCurve, t)
   var p2 = end[1] || end[0];
   var p3 = end[0];
   return [p0, p1, p2, p3];
-};
+}
+/**
+ * @description Get bezier curve relative t
+ * @param {BezierCurve} bezierCurve Bezier Curve
+ * @param {number} t                Current frame t
+ * @return {number} Relative t of bezier curve
+ */
 
-var getBezierCurvePointTByRelativeT = function getBezierCurvePointTByRelativeT(segment, t) {
-  var reBeginX = segment[0][0];
-  var reEndX = segment[3][0];
+
+function getBezierCurveRelativeT(bezierCurve, t) {
+  var reBeginX = bezierCurve[0][0];
+  var reEndX = bezierCurve[3][0];
   var xMinus = reEndX - reBeginX;
   var tMinus = t - reBeginX;
   return tMinus / xMinus;
-};
+}
+/**
+ * @description Get the bezier curve progress of t
+ * @param {BezierCurve} bezierCurve Bezier curve
+ * @param {number} t                Current frame t
+ * @return {number} Progress of current frame
+ */
 
-var getCurveSegmentTState = function getCurveSegmentTState(_a, t) {
+
+function getBezierCurveTProgress(_a, t) {
   var _b = _a[0],
       p0 = _b[1],
       _c = _a[1],
@@ -40,22 +86,35 @@ var getCurveSegmentTState = function getCurveSegmentTState(_a, t) {
       p2 = _d[1],
       _e = _a[3],
       p3 = _e[1];
-  var pow = Math.pow;
   var tMinus = 1 - t;
-  var result1 = p0 * pow(tMinus, 3);
-  var result2 = 3 * p1 * t * pow(tMinus, 2);
-  var result3 = 3 * p2 * pow(t, 2) * tMinus;
-  var result4 = p3 * pow(t, 3);
+  var result1 = p0 * Math.pow(tMinus, 3);
+  var result2 = 3 * p1 * t * Math.pow(tMinus, 2);
+  var result3 = 3 * p2 * Math.pow(t, 2) * tMinus;
+  var result4 = p3 * Math.pow(t, 3);
   return 1 - (result1 + result2 + result3 + result4);
-};
+}
+/**
+ * @description Get frame progress at time t
+ * @param {TransitionCurve} transitionCurve Transition bezier curve
+ * @param {number} t                        Current frame t
+ * @return {number} Progress of frame
+ */
 
-var getFrameStateByT = function getFrameStateByT(bezierCurve, t) {
-  var segment = getBezierCurveSegmentByT(bezierCurve, t);
-  var bezierCurvePointT = getBezierCurvePointTByRelativeT(segment, t);
-  return getCurveSegmentTState(segment, bezierCurvePointT);
-};
 
-var getFrameStateProgressByCurve = function getFrameStateProgressByCurve(curve, frameNum) {
+function getFrameProgressByT(transitionCurve, t) {
+  var bezierCurve = getBezierCurveByT(transitionCurve, t);
+  var relativeT = getBezierCurveRelativeT(bezierCurve, t);
+  return getBezierCurveTProgress(bezierCurve, relativeT);
+}
+/**
+ * @description Get frame state progress by curve
+ * @param {TransitionCurve|string} curve Transition curve or curve name extended
+ * @param {number} frameNum              Frame number
+ * @return {number[]} Frame state progress
+ */
+
+
+function getFrameStateProgressByCurve(curve, frameNum) {
   var targetCurve;
 
   if (typeof curve === 'string') {
@@ -65,22 +124,29 @@ var getFrameStateProgressByCurve = function getFrameStateProgressByCurve(curve, 
   }
 
   var tGap = 1 / (frameNum - 1);
-  var tState = new Array(frameNum).fill(0).map(function (t, i) {
+  var tState = new Array(frameNum).fill(0).map(function (_, i) {
     return i * tGap;
   });
   return tState.map(function (t) {
-    return getFrameStateByT(targetCurve, t);
+    return getFrameProgressByT(targetCurve, t);
   });
-};
-var injectNewCurve = function injectNewCurve(curveName, curve) {
-  if (!curveName || !curve) {
-    console.error('InjectNewCurve Missing Parameters!');
+}
+/**
+ * @description Extend curves (add new transition curve into curves)
+ * @param {string} curveName      Curve name
+ * @param {TransitionCurve} curve Transition curve
+ * @return {boolean} Result
+ */
+
+function extendCurves(curveName, transitionCurve) {
+  if (!curveName || !transitionCurve) {
+    console.error('InjectNewCurve: Missing Parameters!');
     return false;
   }
 
-  curves.set(curveName, curve);
+  curves.set(curveName, transitionCurve);
   return true;
-};
+}
 
 /**
  * @description Linear
@@ -219,116 +285,149 @@ var easeInOutBounce = function easeInOutBounce(t, b, c, d) {
   return easeOutBounce(t * 2 - d, 0, c, d) * 0.5 + c * 0.5 + b;
 };
 var tweens = new Map([['linear', linear], ['easeInSine', easeInSine], ['easeOutSine', easeOutSine], ['easeInOutSine', easeInOutSine], ['easeInQuad', easeInQuad], ['easeOutQuad', easeOutQuad], ['easeInOutQuad', easeInOutQuad], ['easeInCubic', easeInCubic], ['easeOutCubic', easeOutCubic], ['easeInOutCubic', easeInOutCubic], ['easeInQuart', easeInQuart], ['easeOutQuart', easeOutQuart], ['easeInOutQuart', easeInOutQuart], ['easeInQuint', easeInQuint], ['easeOutQuint', easeOutQuint], ['easeInOutQuint', easeInOutQuint], ['easeInBack', easeInBack], ['easeOutBack', easeOutBack], ['easeInOutBack', easeInOutBack], ['easeInElastic', easeInElastic], ['easeOutElastic', easeOutElastic], ['easeInOutElastic', easeInOutElastic], ['easeInBounce', easeInBounce], ['easeOutBounce', easeOutBounce], ['easeInOutBounce', easeInOutBounce]]);
+/**
+ * @description Get frame state progress by tween
+ * @param {TweenName} tweenName Tween name
+ * @param {number} frameNum     Frame number
+ * @return {number[]} Frame state progress
+ */
 
-var getFrameStateProgress = function getFrameStateProgress(dynamic, frameNum, defaultDynamic) {
-  var validDynamic = true;
-  if (typeof dynamic !== 'string' && !(dynamic instanceof Array)) validDynamic = false;
-  if (typeof dynamic === 'string' && !curves.get(dynamic) && !tweens.get(dynamic)) validDynamic = false;
-  if (!validDynamic) dynamic = defaultDynamic;
-  var calculator = tweens.get(dynamic) || getFrameStateProgressByCurve;
+function getFrameStateProgressByTween(tweenName, frameNum) {
+  if (frameNum === void 0) {
+    frameNum = 30;
+  }
+
+  var _a = [0, 1],
+      startState = _a[0],
+      changeValue = _a[1];
+  var tGap = 1 / (frameNum - 1);
+  var tweenFun = tweens.get(tweenName);
+  return new Array(frameNum).fill(0).map(function (_, i) {
+    return tweenFun(i * tGap, startState, changeValue, frameNum);
+  });
+}
+
+function dynamicValidator(dynamic) {
+  var isArray = dynamic instanceof Array;
+  var isCurve = curves.has(dynamic);
+  var isTween = tweens.has(dynamic);
+  if (isArray) return 'transitionCurve';
+  if (isCurve) return 'transitionCurveName';
+  if (isTween) return 'tween';
+  throw new Error("Transition: Invalid dynamic of " + dynamic);
+}
+function getFrameStateProgress(dynamic, frameNum) {
+  if (frameNum === void 0) {
+    frameNum = 30;
+  }
+
+  var dynamicType = dynamicValidator(dynamic);
+  var calculator = dynamicType === 'tween' ? getFrameStateProgressByTween : getFrameStateProgressByCurve;
   return calculator(dynamic, frameNum);
-};
+}
 
-var getType = function getType(target) {
+function getType(target) {
   return Object.prototype.toString.call(target).replace(/\[object |\]/g, '').toLowerCase();
-};
+} // eslint-disable-next-line
 
-var checkParams = function checkParams(dynamic, startState, endState, frameNum) {
-  var _a = [_typeof(startState), _typeof(endState)],
-      starStateType = _a[0],
-      endStateType = _a[1];
 
-  if (typeof dynamic === 'undefined' || starStateType === 'undefined' || endStateType === 'undefined') {
-    console.error('transition: Missing Parameters!');
-    return false;
-  }
+function isNumber(target) {
+  return Number.isFinite(target);
+} // eslint-disable-next-line
 
-  if (typeof frameNum !== 'number') {
-    console.error('transition: frameNum should be of type number!');
-    return false;
-  }
 
-  if (starStateType !== _typeof(endStateType)) {
-    console.error('transition: Inconsistent Status Types!');
-    return false;
-  }
+function recursiveAble(target) {
+  var type = getType(target);
+  return type === 'array' || type === 'object';
+} // eslint-disable-next-line
 
-  if (typeof dynamic === 'string' && !curves.has(dynamic) && !tweens.has(dynamic) || !(dynamic instanceof Array)) {
-    console.warn('transition: Transition dynamic curve not found, default dynamic curve will be used!');
-  }
 
-  return true;
-};
-
-var getNumberTransitionState = function getNumberTransitionState(startState, endState, frameStateProgress) {
-  var minus = endState - startState;
-  return frameStateProgress.map(function (s) {
-    return startState + minus * s;
-  });
-};
-
-var getArrayTransitionState = function getArrayTransitionState(startState, endState, frameStateProgress) {
-  var minus = endState.map(function (v, i) {
-    if (typeof v !== 'number') return false;
-    return v - startState[i];
-  });
-  return frameStateProgress.map(function (s) {
-    return minus.map(function (v, i) {
-      if (v === false) return endState[i];
-      return startState[i] + v * s;
-    });
-  });
-};
-
-var getObjectTransitionState = function getObjectTransitionState(startState, endState, frameStateProgress) {
-  var keys = Object.keys(endState);
-  var startValue = keys.map(function (k) {
-    return startState[k];
-  });
-  var endValue = keys.map(function (k) {
-    return endState[k];
-  });
-  var arrayState = getArrayTransitionState(startValue, endValue, frameStateProgress);
-  return arrayState.map(function (item) {
-    var frameData = {};
-    item.forEach(function (v, i) {
-      return frameData[keys[i]] = v;
-    });
-    return frameData;
-  });
-};
-
-var getTransitionState = function getTransitionState(startState, endState, frameStateProgress) {
+function transitionAble(startState) {
   var stateType = getType(startState);
-  if (stateType === 'number') return getNumberTransitionState(startState, endState, frameStateProgress);
-  if (stateType === 'array') return getArrayTransitionState(startState, endState, frameStateProgress);
-  if (stateType === 'object') return getObjectTransitionState(startState, endState, frameStateProgress);
-  return frameStateProgress.map(function () {
-    return endState;
+  return ['number', 'array', 'object'].includes(stateType);
+} // eslint-disable-next-line
+
+
+function asNumber(target) {
+  return target;
+}
+
+function createTargetArray(target, num) {
+  return new Array(num).fill(0).map(function (_) {
+    return target;
   });
-};
+} // eslint-disable-next-line
 
-var recursionTransitionState = function recursionTransitionState(startState, endState, frameStateProgress) {
-  var state = getTransitionState(startState, endState, frameStateProgress);
 
-  var _loop_1 = function _loop_1(key) {
-    var bTemp = startState[key];
-    var eTemp = endState[key];
-    if (_typeof(eTemp) !== 'object') return "continue";
-    var data = recursionTransitionState(bTemp, eTemp, frameStateProgress);
-    state.forEach(function (fs, i) {
-      return fs[key] = data[i];
-    });
-  };
+function updateTargetValues(target, values, key) {
+  return target.map(function (_, i) {
+    var _a;
+
+    return __assign(__assign({}, _), (_a = {}, _a[key] = values[i], _a));
+  });
+}
+
+function createInitState(isArray) {
+  return isArray ? [] : {};
+}
+
+function validator(dynamic, startState, endState, frameNum) {
+  var argTypes = [dynamic, startState, endState, frameNum].map(getType);
+  if (argTypes.find(function (_) {
+    return _ === 'undefined';
+  })) throw new Error('transition: Missing Parameters!');
+  if (argTypes[1] !== argTypes[2]) throw new Error('transition: The start state type and the end state type are inconsistent!');
+  if (argTypes[3] !== 'number' || frameNum <= 0) throw new Error("Transition: frameNum should be a number and greater than 1");
+  dynamicValidator(dynamic);
+  return true;
+}
+
+function getTransitionState(start, end, frameStateProgress) {
+  var minus = end - start;
+  return frameStateProgress.map(function (s) {
+    return start + minus * s;
+  });
+}
+
+function recursiveTransition(startState, endState, frameStateProgress, deep) {
+  var stateType = getType(startState);
+  var length = frameStateProgress.length;
+  if (stateType === 'number') return getTransitionState(asNumber(startState), asNumber(endState), frameStateProgress);
+  var isArray = stateType === 'array';
+  var state = new Array(length).fill(isArray).map(createInitState);
 
   for (var key in endState) {
-    _loop_1(key);
+    var start = startState[key];
+    var end = endState[key]; // eslint-disable-next-line
+
+    var keyState = [];
+
+    if (isNumber(end)) {
+      keyState = getTransitionState(asNumber(start), asNumber(end), frameStateProgress);
+    } else if (recursiveAble(end) && deep) {
+      keyState = recursiveTransition(start, end, frameStateProgress, deep);
+    } else {
+      keyState = createTargetArray(end, length);
+    }
+
+    state = updateTargetValues(state, keyState, key);
   }
 
   return state;
-};
+}
+/**
+ * @description Get the N-frame animation state by the start and end state
+ *              of the animation and the dynamic curve
+ * @param {TDynamic} dynamic Dynamic curve name or data
+ * @param {Any} startState   Animation start state
+ * @param {Any} endState     Animation end state
+ * @param {Number} frameNum  Number of Animation frames
+ * @param {Boolean} deep     Whether to use recursive mode
+ * @return {Array|Boolean} State of each frame of the animation (Invalid input will return false)
+ */
 
-var transition = function transition(dynamic, startState, endState, frameNum, deep) {
+
+function transition(dynamic, startState, endState, frameNum, deep) {
   if (frameNum === void 0) {
     frameNum = 30;
   }
@@ -337,19 +436,20 @@ var transition = function transition(dynamic, startState, endState, frameNum, de
     deep = false;
   }
 
-  if (!checkParams(dynamic, startState, endState, frameNum)) return [endState];
-  var stateType = getType(startState);
-  if (stateType !== 'number' && stateType !== 'array' && stateType !== 'object') return new Array(frameNum).fill(endState);
+  validator(dynamic, startState, endState, frameNum);
+
+  if (!transitionAble(startState)) {
+    console.warn('Transition: Only supports array number and object types');
+    return [startState, endState];
+  }
 
   try {
-    var frameStateProgress = getFrameStateProgress(dynamic, frameNum, 'linear'); // If the recursion mode is not enabled or the state type is Number, the shallow state calculation is performed directly.
-
-    if (!deep || typeof endState === 'number') return getTransitionState(startState, endState, frameStateProgress);
-    return recursionTransitionState(startState, endState, frameStateProgress);
+    var frameStateProgress = getFrameStateProgress(dynamic, frameNum);
+    return recursiveTransition(startState, endState, frameStateProgress, deep);
   } catch (_a) {
-    console.warn('Transition parameter may be abnormal!');
+    console.warn('Transition: parameter may be abnormal!');
     return [endState];
   }
-};
+}
 
-export { injectNewCurve, transition };
+export { extendCurves, transition };

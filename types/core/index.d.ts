@@ -1,6 +1,7 @@
-import { injectNewCurve, getFrameStateProgressByCurve, TCurve } from './curves';
-import { getFrameStateProgressByTween, TTweenName } from './tweens';
-declare type TGetFrameStateProgress = (dynamic: string | TCurve, frameNum: number, defaultDynamic: TTweenName) => number[];
-export declare const getFrameStateProgress: TGetFrameStateProgress;
-export { injectNewCurve, getFrameStateProgressByCurve, getFrameStateProgressByTween };
+import { extendCurves, getFrameStateProgressByCurve } from './curves';
+import { getFrameStateProgressByTween } from './tweens';
+import { Dynamic, DynamicType } from 'types';
+export declare function dynamicValidator(dynamic: Dynamic): DynamicType;
+export declare function getFrameStateProgress(dynamic: Dynamic, frameNum?: number): number[];
+export { extendCurves, getFrameStateProgressByCurve, getFrameStateProgressByTween };
 export default getFrameStateProgress;

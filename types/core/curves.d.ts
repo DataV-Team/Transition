@@ -1,21 +1,16 @@
-export declare type TPoint = [number, number];
-export declare type TCurveSegment = TPoint[];
-export declare type TCurve = TCurveSegment[];
-export declare const curves: Map<string, TCurve>;
+import { TransitionCurve } from 'types/curves';
+export declare const curves: Map<string, TransitionCurve>;
 /**
  * @description Get frame state progress by curve
- * @param {String|TCurve} curve Curve name or easing curve data
- * @param {Number} frameNum      Frame number
- * @return {Number[]} Frame state progress
+ * @param {TransitionCurve|string} curve Transition curve or curve name extended
+ * @param {number} frameNum              Frame number
+ * @return {number[]} Frame state progress
  */
-declare type TGetFrameStateProgressByCurve = (curve: string | TCurve, frameNum: number) => number[];
-export declare const getFrameStateProgressByCurve: TGetFrameStateProgressByCurve;
+export declare function getFrameStateProgressByCurve(curve: TransitionCurve | string, frameNum: number): number[];
 /**
- * @description Inject new curve into curves as config
- * @param {String} curveName The key of curve
- * @param {TCurve} curve     Bezier curve data
- * @return {Boolean} Result
+ * @description Extend curves (add new transition curve into curves)
+ * @param {string} curveName      Curve name
+ * @param {TransitionCurve} curve Transition curve
+ * @return {boolean} Result
  */
-declare type TInjectNewCurve = (curveName: string, curve: TCurve) => boolean;
-export declare const injectNewCurve: TInjectNewCurve;
-export {};
+export declare function extendCurves(curveName: string, transitionCurve: TransitionCurve): boolean;
