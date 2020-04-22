@@ -16,11 +16,11 @@
 
 ### How is the animation produced?
 
-* Get one frame data of the animation.
-* Draw this frame animation.
-* Repeat...
+- Get one frame data of the animation.
+- Draw this frame animation.
+- Repeat...
 
-We can use three sets of data to describe an animation (**animation start state**, **animation end state**, **easing curve**).Based on these three sets of data, we can calculate the **state of each frame** of the animation,this is what ***Transition*** provided.According to the data of each frame, we carry out continuous redrawing, and the animation is generated.
+We can use three sets of data to describe an animation (**animation start state**, **animation end state**, **easing curve**).Based on these three sets of data, we can calculate the **state of each frame** of the animation,this is what **_Transition_** provided.According to the data of each frame, we carry out continuous redrawing, and the animation is generated.
 
 ### Install with npm
 
@@ -57,7 +57,7 @@ Detailed documents and examples can be viewed on the [HomePage](http://transitio
 - [Extend New Easing Curve](#Extend-New-Easing-Curve)
 - [Easing Curve Table](#Easing-curve-table)
 
-------
+---
 
 <h3 align="center">Annotation</h3>
 
@@ -72,7 +72,8 @@ Detailed documents and examples can be viewed on the [HomePage](http://transitio
  * @param {Boolean} deep                   Whether to use recursive mode
  * @return {Array} State of each frame of the animation
  */
-function transition (tBC, startState = false, endState = false, frameNum = 30, deep = false) {  // ...
+function transition(tBC, startState = false, endState = false, frameNum = 30, deep = false) {
+  // ...
 }
 ```
 
@@ -80,10 +81,10 @@ function transition (tBC, startState = false, endState = false, frameNum = 30, d
 
 **Transition** provides three data types to describe the animation state.
 
-* [Number](#Number)
-* [Array](#Array)
-* [Object](#Annotation)
-* [Recursive](#Recursive)
+- [Number](#Number)
+- [Array](#Array)
+- [Object](#Annotation)
+- [Recursive](#Recursive)
 
 #### Number
 
@@ -189,8 +190,8 @@ const animationState = transition('linear', beginState, endState, 3, true)
 
 **Notice**
 
-* Non-Number attribute or element does not participate in calculations.
-* The data type of the start and end state should be consistent（Including the number of attributes and elements）.
+- Non-Number attribute or element does not participate in calculations.
+- The data type of the start and end state should be consistent（Including the number of attributes and elements）.
 
 <h3 align="center">Extend New Easing Curve</h3>
 
@@ -202,7 +203,7 @@ import { injectNewCurve } from '@jiaminghi/transition'
 const curveName = 'linear'
 
 // Can be obtained by drawing tools
-const bezierCurve = [[[0, 1]],[[1, 0]]]
+const bezierCurve = [[[0, 1]], [[1, 0]]]
 
 injectNewCurve(curveName, bezierCurve)
 ```
@@ -211,103 +212,128 @@ injectNewCurve(curveName, bezierCurve)
 
 <h3 align="center">Easing Curve Table</h3>
 
-* [linear](#linear)
-* [easeInSine](#easeInSine)
-* [easeOutSine](#easeOutSine)
-* [easeInOutSine](#easeInOutSine)
-* [easeInQuad](#easeInQuad)
-* [easeOutQuad](#easeOutQuad)
-* [easeInOutQuad](#easeInOutQuad)
-* [easeInCubic](#easeInCubic)
-* [easeOutCubic](#easeOutCubic)
-* [easeInOutCubic](#easeInOutCubic)
-* [easeInQuart](#easeInQuart)
-* [easeOutQuart](#easeOutQuart)
-* [easeInOutQuart](#easeInOutQuart)
-* [easeInQuint](#easeInQuint)
-* [easeOutQuint](#easeOutQuint)
-* [easeInOutQuint](#easeInOutQuint)
-* [easeInBack](#easeInBack)
-* [easeOutBack](#easeOutBack)
-* [easeInOutBack](#easeInOutBack)
-* [easeInElastic](#easeInElastic)
-* [easeOutElastic](#easeOutElastic)
-* [easeInOutElastic](#easeInOutElastic)
-* [easeInBounce](#easeInBounce)
-* [easeOutBounce](#easeOutBounce)
-* [easeInOutBounce](#easeInOutBounce)
+- [linear](#linear)
+- [easeInSine](#easeInSine)
+- [easeOutSine](#easeOutSine)
+- [easeInOutSine](#easeInOutSine)
+- [easeInQuad](#easeInQuad)
+- [easeOutQuad](#easeOutQuad)
+- [easeInOutQuad](#easeInOutQuad)
+- [easeInCubic](#easeInCubic)
+- [easeOutCubic](#easeOutCubic)
+- [easeInOutCubic](#easeInOutCubic)
+- [easeInQuart](#easeInQuart)
+- [easeOutQuart](#easeOutQuart)
+- [easeInOutQuart](#easeInOutQuart)
+- [easeInQuint](#easeInQuint)
+- [easeOutQuint](#easeOutQuint)
+- [easeInOutQuint](#easeInOutQuint)
+- [easeInBack](#easeInBack)
+- [easeOutBack](#easeOutBack)
+- [easeInOutBack](#easeInOutBack)
+- [easeInElastic](#easeInElastic)
+- [easeOutElastic](#easeOutElastic)
+- [easeInOutElastic](#easeInOutElastic)
+- [easeInBounce](#easeInBounce)
+- [easeOutBounce](#easeOutBounce)
+- [easeInOutBounce](#easeInOutBounce)
 
 #### linear
+
 ![linear](/exampleImg/linear.gif)
 
 #### easeInSine
+
 ![linear](/exampleImg/easeInSine.gif)
 
 #### easeOutSine
+
 ![linear](/exampleImg/easeOutSine.gif)
 
 #### easeInOutSine
+
 ![linear](/exampleImg/easeInOutSine.gif)
 
 #### easeInQuad
+
 ![linear](/exampleImg/easeInQuad.gif)
 
 #### easeOutQuad
+
 ![linear](/exampleImg/easeOutQuad.gif)
 
 #### easeInOutQuad
+
 ![linear](/exampleImg/easeInOutQuad.gif)
 
 #### easeInCubic
+
 ![linear](/exampleImg/easeInCubic.gif)
 
 #### easeOutCubic
+
 ![linear](/exampleImg/easeOutCubic.gif)
 
 #### easeInOutCubic
+
 ![linear](/exampleImg/easeInOutCubic.gif)
 
 #### easeInQuart
+
 ![linear](/exampleImg/easeInQuart.gif)
 
 #### easeOutQuart
+
 ![linear](/exampleImg/easeOutQuart.gif)
 
 #### easeInOutQuart
+
 ![linear](/exampleImg/easeInOutQuart.gif)
 
 #### easeInQuint
+
 ![linear](/exampleImg/easeInQuint.gif)
 
 #### easeOutQuint
+
 ![linear](/exampleImg/easeOutQuint.gif)
 
 #### easeInOutQuint
+
 ![linear](/exampleImg/easeInOutQuint.gif)
 
 #### easeInBack
+
 ![linear](/exampleImg/easeInBack.gif)
 
 #### easeOutBack
+
 ![linear](/exampleImg/easeOutBack.gif)
 
 #### easeInOutBack
+
 ![linear](/exampleImg/easeInOutBack.gif)
 
 #### easeInElastic
+
 ![linear](/exampleImg/easeInElastic.gif)
 
 #### easeOutElastic
+
 ![linear](/exampleImg/easeOutElastic.gif)
 
 #### easeInOutElastic
+
 ![linear](/exampleImg/easeInOutElastic.gif)
 
 #### easeInBounce
+
 ![linear](/exampleImg/easeInBounce.gif)
 
 #### easeOutBounce
+
 ![linear](/exampleImg/easeOutBounce.gif)
 
 #### easeInOutBounce
+
 ![linear](/exampleImg/easeInOutBounce.gif)

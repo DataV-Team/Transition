@@ -1,10 +1,4 @@
-'use strict';
-
-Object.defineProperty(exports, '__esModule', { value: true });
-
-function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'default' in ex) ? ex['default'] : ex; }
-
-var _typeof = _interopDefault(require('@babel/runtime/helpers/typeof'));
+import _typeof from '@babel/runtime/helpers/esm/typeof';
 
 var curves = new Map([]);
 
@@ -358,5 +352,4 @@ var transition = function transition(dynamic, startState, endState, frameNum, de
   }
 };
 
-exports.injectNewCurve = injectNewCurve;
-exports.transition = transition;
+export { injectNewCurve, transition };

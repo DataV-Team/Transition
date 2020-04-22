@@ -8,7 +8,7 @@
     <a href="https://www.npmjs.com/package/@jiaminghi/transition"><img src="https://img.shields.io/npm/v/@jiaminghi/transition.svg" alt="NPM" /></a>
 </p>
 
-### Transition是什么?
+### Transition 是什么?
 
 - 它是一个基于**贝塞尔曲线**的动效插件。
 - 它提供常用的**缓动曲线**。
@@ -16,13 +16,13 @@
 
 ### 动画是如何产生的?
 
-* 获取一帧动画数据
-* 根据动画数据渲染图像
-* 重复...
+- 获取一帧动画数据
+- 根据动画数据渲染图像
+- 重复...
 
-我们可以使用三组数据去描述一段动画（**动画起始状态**、**动画结束状态**、**缓动曲线**），根据这三组数据我们可以计算出动画过程中每一帧动画的状态。这就是***Transition***所提供的功能，根据每一帧动画的状态，我们不断的进行重绘，动画就产生了。
+我们可以使用三组数据去描述一段动画（**动画起始状态**、**动画结束状态**、**缓动曲线**），根据这三组数据我们可以计算出动画过程中每一帧动画的状态。这就是**_Transition_**所提供的功能，根据每一帧动画的状态，我们不断的进行重绘，动画就产生了。
 
-### npm安装
+### npm 安装
 
 ```shell
 $ npm install @jiaminghi/transition
@@ -57,7 +57,7 @@ import { transition, injectNewCurve } from '@jiaminghi/transition'
 - [扩展新曲线](#扩展新曲线)
 - [缓动曲线表](#缓动曲线表)
 
-------
+---
 
 <h3 align="center">注解</h3>
 
@@ -71,7 +71,8 @@ import { transition, injectNewCurve } from '@jiaminghi/transition'
  * @param {Boolean} deep                   是否启用递归模式
  * @return {Array} 每一帧的动画数据
  */
-function transition (tBC, startState = null, endState = null, frameNum = 30, deep = false) {  // ...
+function transition(tBC, startState = null, endState = null, frameNum = 30, deep = false) {
+  // ...
 }
 ```
 
@@ -79,10 +80,10 @@ function transition (tBC, startState = null, endState = null, frameNum = 30, dee
 
 **Transition** 支持三种数据类型以描述动画状态.
 
-* [Number](#Number)
-* [Array](#Array)
-* [Object](#Annotation)
-* [Recursive](#Recursive)
+- [Number](#Number)
+- [Array](#Array)
+- [Object](#Annotation)
+- [Recursive](#Recursive)
 
 #### Number
 
@@ -188,8 +189,8 @@ const animationState = transition('linear', beginState, endState, 3, true)
 
 **Notice**
 
-* 非数值的属性或元素不参与计算过程.
-* 起始状态与结束状态的数据类型（包括属性及元素的数量）必须保持一致.
+- 非数值的属性或元素不参与计算过程.
+- 起始状态与结束状态的数据类型（包括属性及元素的数量）必须保持一致.
 
 <h3 align="center">扩展新曲线</h3>
 
@@ -201,7 +202,7 @@ import { injectNewCurve } from '@jiaminghi/transition'
 const curveName = 'linear'
 
 // 可以使用绘制工具获得
-const bezierCurve = [[[0, 1]],[[1, 0]]]
+const bezierCurve = [[[0, 1]], [[1, 0]]]
 
 injectNewCurve(curveName, bezierCurve)
 ```
@@ -210,103 +211,128 @@ injectNewCurve(curveName, bezierCurve)
 
 <h3 align="center">缓动曲线表</h3>
 
-* [linear](#linear)
-* [easeInSine](#easeInSine)
-* [easeOutSine](#easeOutSine)
-* [easeInOutSine](#easeInOutSine)
-* [easeInQuad](#easeInQuad)
-* [easeOutQuad](#easeOutQuad)
-* [easeInOutQuad](#easeInOutQuad)
-* [easeInCubic](#easeInCubic)
-* [easeOutCubic](#easeOutCubic)
-* [easeInOutCubic](#easeInOutCubic)
-* [easeInQuart](#easeInQuart)
-* [easeOutQuart](#easeOutQuart)
-* [easeInOutQuart](#easeInOutQuart)
-* [easeInQuint](#easeInQuint)
-* [easeOutQuint](#easeOutQuint)
-* [easeInOutQuint](#easeInOutQuint)
-* [easeInBack](#easeInBack)
-* [easeOutBack](#easeOutBack)
-* [easeInOutBack](#easeInOutBack)
-* [easeInElastic](#easeInElastic)
-* [easeOutElastic](#easeOutElastic)
-* [easeInOutElastic](#easeInOutElastic)
-* [easeInBounce](#easeInBounce)
-* [easeOutBounce](#easeOutBounce)
-* [easeInOutBounce](#easeInOutBounce)
+- [linear](#linear)
+- [easeInSine](#easeInSine)
+- [easeOutSine](#easeOutSine)
+- [easeInOutSine](#easeInOutSine)
+- [easeInQuad](#easeInQuad)
+- [easeOutQuad](#easeOutQuad)
+- [easeInOutQuad](#easeInOutQuad)
+- [easeInCubic](#easeInCubic)
+- [easeOutCubic](#easeOutCubic)
+- [easeInOutCubic](#easeInOutCubic)
+- [easeInQuart](#easeInQuart)
+- [easeOutQuart](#easeOutQuart)
+- [easeInOutQuart](#easeInOutQuart)
+- [easeInQuint](#easeInQuint)
+- [easeOutQuint](#easeOutQuint)
+- [easeInOutQuint](#easeInOutQuint)
+- [easeInBack](#easeInBack)
+- [easeOutBack](#easeOutBack)
+- [easeInOutBack](#easeInOutBack)
+- [easeInElastic](#easeInElastic)
+- [easeOutElastic](#easeOutElastic)
+- [easeInOutElastic](#easeInOutElastic)
+- [easeInBounce](#easeInBounce)
+- [easeOutBounce](#easeOutBounce)
+- [easeInOutBounce](#easeInOutBounce)
 
 #### linear
+
 ![linear](/exampleImg/linear.gif)
 
 #### easeInSine
+
 ![linear](/exampleImg/easeInSine.gif)
 
 #### easeOutSine
+
 ![linear](/exampleImg/easeOutSine.gif)
 
 #### easeInOutSine
+
 ![linear](/exampleImg/easeInOutSine.gif)
 
 #### easeInQuad
+
 ![linear](/exampleImg/easeInQuad.gif)
 
 #### easeOutQuad
+
 ![linear](/exampleImg/easeOutQuad.gif)
 
 #### easeInOutQuad
+
 ![linear](/exampleImg/easeInOutQuad.gif)
 
 #### easeInCubic
+
 ![linear](/exampleImg/easeInCubic.gif)
 
 #### easeOutCubic
+
 ![linear](/exampleImg/easeOutCubic.gif)
 
 #### easeInOutCubic
+
 ![linear](/exampleImg/easeInOutCubic.gif)
 
 #### easeInQuart
+
 ![linear](/exampleImg/easeInQuart.gif)
 
 #### easeOutQuart
+
 ![linear](/exampleImg/easeOutQuart.gif)
 
 #### easeInOutQuart
+
 ![linear](/exampleImg/easeInOutQuart.gif)
 
 #### easeInQuint
+
 ![linear](/exampleImg/easeInQuint.gif)
 
 #### easeOutQuint
+
 ![linear](/exampleImg/easeOutQuint.gif)
 
 #### easeInOutQuint
+
 ![linear](/exampleImg/easeInOutQuint.gif)
 
 #### easeInBack
+
 ![linear](/exampleImg/easeInBack.gif)
 
 #### easeOutBack
+
 ![linear](/exampleImg/easeOutBack.gif)
 
 #### easeInOutBack
+
 ![linear](/exampleImg/easeInOutBack.gif)
 
 #### easeInElastic
+
 ![linear](/exampleImg/easeInElastic.gif)
 
 #### easeOutElastic
+
 ![linear](/exampleImg/easeOutElastic.gif)
 
 #### easeInOutElastic
+
 ![linear](/exampleImg/easeInOutElastic.gif)
 
 #### easeInBounce
+
 ![linear](/exampleImg/easeInBounce.gif)
 
 #### easeOutBounce
+
 ![linear](/exampleImg/easeOutBounce.gif)
 
 #### easeInOutBounce
+
 ![linear](/exampleImg/easeInOutBounce.gif)

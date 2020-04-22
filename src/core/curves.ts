@@ -1,29 +1,28 @@
-export type TPoint = [number, number]
-export type TCurveSegment = TPoint[]
-export type TCurve = TCurveSegment[]
+import { TransitionCurve, TransitionCurveSegment, BezierCurve } from 'types/curves'
 
-export const curves = new Map<string, TCurve>([])
+export const curves = new Map<string, TransitionCurve>([])
 
 /**
- * @description Get the corresponding segment-curve according by t
- * @param {TCurve} bezierCurve Easing bezier curve
- * @param {Number} t           Current frame t
- * @return {TCurveSegment} Segment curve
+ * @description Get bezier curve by t
+ * @param {TransitionCurve} transitionCurve transition curve
+ * @param {number} t                        Current frame t
+ * @return {BezierCurve} Bezier Curve
  */
-type TGetBezierCurveSegmentByT = (bezierCurve: TCurve, t: number) => TCurveSegment
+function getBezierCurveByT(transitionCurve: TransitionCurve, t: number): BezierCurve {
+  const curveNum = transitionCurve.length
 
-const getBezierCurveSegmentByT: TGetBezierCurveSegmentByT = (bezierCurve, t) => {
-  const lastIndex = bezierCurve.length - 1
+  const lastIndex = curveNum - 1
 
-  let begin!: TCurveSegment, end!: TCurveSegment
+  let begin!: TransitionCurveSegment
+  let end!: TransitionCurveSegment
 
-  for (let i = 0, segmentNum = bezierCurve.length; i < segmentNum; i++) {
+  for (let i = 0; i < curveNum; i++) {
     if (i === lastIndex) continue
 
-    const segment = bezierCurve[i]
+    const segment = transitionCurve[i]
 
     begin = segment
-    end = bezierCurve[i + 1]
+    end = transitionCurve[i + 1]
 
     const currentMainPointX = begin[0][0]
     const nextMainPointX = end[0][0]
@@ -40,16 +39,14 @@ const getBezierCurveSegmentByT: TGetBezierCurveSegmentByT = (bezierCurve, t) => 
 }
 
 /**
- * @description Get local t based on relative t and segment-curve
- * @param {TCurveSegment} segment Segment-curve
- * @param {Number} t              Current frame t
- * @return {Number} local t of segment-curve
+ * @description Get bezier curve relative t
+ * @param {BezierCurve} bezierCurve Bezier Curve
+ * @param {number} t                Current frame t
+ * @return {number} Relative t of bezier curve
  */
-type TGetBezierCurvePointTByRelativeT = (segment: TCurveSegment, t: number) => number
-
-const getBezierCurvePointTByRelativeT: TGetBezierCurvePointTByRelativeT = (segment, t) => {
-  const reBeginX = segment[0][0]
-  const reEndX = segment[3][0]
+function getBezierCurveRelativeT(bezierCurve: BezierCurve, t: number): number {
+  const reBeginX = bezierCurve[0][0]
+  const reEndX = bezierCurve[3][0]
 
   const xMinus = reEndX - reBeginX
 
@@ -59,25 +56,21 @@ const getBezierCurvePointTByRelativeT: TGetBezierCurvePointTByRelativeT = (segme
 }
 
 /**
- * @description Get the segment-curve progress of t
- * @param {Array} segment Segment-curve
- * @param {Number} t      Current frame t
- * @return {Number} Progress of current frame
+ * @description Get the bezier curve progress of t
+ * @param {BezierCurve} bezierCurve Bezier curve
+ * @param {number} t                Current frame t
+ * @return {number} Progress of current frame
  */
-type TGetCurveSegmentTState = (segment: TCurveSegment, t: number) => number
-
-const getCurveSegmentTState: TGetCurveSegmentTState = ([[, p0], [, p1], [, p2], [, p3]], t) => {
-  const { pow } = Math
-
+function getBezierCurveTProgress([[, p0], [, p1], [, p2], [, p3]]: BezierCurve, t: number): number {
   const tMinus = 1 - t
 
-  const result1 = p0 * pow(tMinus, 3)
+  const result1 = p0 * Math.pow(tMinus, 3)
 
-  const result2 = 3 * p1 * t * pow(tMinus, 2)
+  const result2 = 3 * p1 * t * Math.pow(tMinus, 2)
 
-  const result3 = 3 * p2 * pow(t, 2) * tMinus
+  const result3 = 3 * p2 * Math.pow(t, 2) * tMinus
 
-  const result4 = p3 * pow(t, 3)
+  const result4 = p3 * Math.pow(t, 3)
 
   return 1 - (result1 + result2 + result3 + result4)
 }
@@ -88,14 +81,12 @@ const getCurveSegmentTState: TGetCurveSegmentTState = ([[, p0], [, p1], [, p2], 
  * @param {Number} t           Current frame t
  * @return {Number} Progress of frame
  */
-type TGetFrameStateByT = (bezierCurve: TCurve, t: number) => number
+function getFrameProgressByT(transitionCurve: TransitionCurve, t: number): number {
+  const bezierCurve = getBezierCurveByT(transitionCurve, t)
 
-const getFrameStateByT: TGetFrameStateByT = (bezierCurve, t) => {
-  const segment = getBezierCurveSegmentByT(bezierCurve, t)
+  const bezierCurvePointT = getBezierCurveRelativeT(bezierCurve, t)
 
-  const bezierCurvePointT = getBezierCurvePointTByRelativeT(segment, t)
-
-  return getCurveSegmentTState(segment, bezierCurvePointT)
+  return getBezierCurveTProgress(bezierCurve, bezierCurvePointT)
 }
 
 /**
@@ -104,13 +95,14 @@ const getFrameStateByT: TGetFrameStateByT = (bezierCurve, t) => {
  * @param {Number} frameNum      Frame number
  * @return {Number[]} Frame state progress
  */
-type TGetFrameStateProgressByCurve = (curve: string|TCurve, frameNum: number) => number[]
-
-export const getFrameStateProgressByCurve: TGetFrameStateProgressByCurve = (curve, frameNum) => {
-  let targetCurve: TCurve
+export function getFrameStateProgressByCurve(
+  curve: TransitionCurve | string,
+  frameNum: number
+): number[] {
+  let targetCurve: TransitionCurve
 
   if (typeof curve === 'string') {
-    targetCurve = curves.get(curve) as TCurve
+    targetCurve = curves.get(curve)!
   } else {
     targetCurve = curve
   }
@@ -118,7 +110,7 @@ export const getFrameStateProgressByCurve: TGetFrameStateProgressByCurve = (curv
   const tGap = 1 / (frameNum - 1)
   const tState = new Array(frameNum).fill(0).map((t, i) => i * tGap)
 
-  return tState.map(t => getFrameStateByT(targetCurve, t))
+  return tState.map(t => getFrameProgressByT(targetCurve, t))
 }
 
 /**
@@ -127,9 +119,7 @@ export const getFrameStateProgressByCurve: TGetFrameStateProgressByCurve = (curv
  * @param {TCurve} curve     Bezier curve data
  * @return {Boolean} Result
  */
-type TInjectNewCurve = (curveName: string, curve: TCurve) => boolean
-
-export const injectNewCurve: TInjectNewCurve = (curveName, curve) => {
+export function injectNewCurve(curveName: string, curve: TransitionCurve): boolean {
   if (!curveName || !curve) {
     console.error('InjectNewCurve Missing Parameters!')
 
