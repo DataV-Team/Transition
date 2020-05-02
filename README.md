@@ -70,8 +70,8 @@ import { transition, injectNewCurve } from '@jiaminghi/transition'
 /**
  * @description 基于缓动曲线及起止状态获取若干帧动画状态
  * @param {EaseCurve} easeCurve 缓动曲线名或数据
- * @param {T} startState      动画起始状态
- * @param {T} endState        动画结束状态
+ * @param {T} startState        动画起始状态
+ * @param {T} endState          动画结束状态
  * @param {Number} frameNum     动画过渡帧数
  * @param {Boolean} deep        是否启用递归模式
  * @return {T[]} 过渡帧数据
