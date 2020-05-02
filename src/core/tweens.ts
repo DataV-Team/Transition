@@ -1,4 +1,4 @@
-import { Tween, TweenName } from '../types/tweens'
+import { Tween, TweenName } from '../types/core/tweens'
 
 /**
  * @description Linear

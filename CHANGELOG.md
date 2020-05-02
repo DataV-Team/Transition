@@ -1,3 +1,19 @@
+# 2.0.0 (2020-05-02)
+
+### Perfect
+
+- **typescript:** Rewrite width typescript.
+
+- **tween:** Common easecurve will be calculated using the tween function.
+
+### New
+
+- **createAnimator:** A simple function to create an animator.
+
+### Break Change
+
+- **injectNewCurve:** injectNewCurve renamed to extendCurves.
+
 # 1.1.11-alpha (2019-08-29)
 
 ### Perfect

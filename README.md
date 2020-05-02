@@ -3,9 +3,15 @@
 <h1 align="center">Transition</h1>
 
 <p align="center">
-    <a href="https://travis-ci.com/DataV-Team/transition"><img src="https://img.shields.io/travis/com/DataV-Team/transition.svg" alt="Travis CI"></a>
-    <a href="https://github.com/DataV-Team/transition/blob/master/LICENSE"><img src="https://img.shields.io/github/license/DataV-Team/transition.svg" alt="LICENSE" /> </a>
-    <a href="https://www.npmjs.com/package/@jiaminghi/transition"><img src="https://img.shields.io/npm/v/@jiaminghi/transition.svg" alt="NPM" /></a>
+    <a href="https://travis-ci.com/DataV-Team/transition">
+      <img src="https://img.shields.io/travis/com/DataV-Team/transition.svg" alt="Travis CI">
+    </a>
+    <a href="https://github.com/DataV-Team/transition/blob/master/LICENSE">
+      <img src="https://img.shields.io/github/license/DataV-Team/transition.svg" alt="LICENSE" />
+    </a>
+    <a href="https://www.npmjs.com/package/@jiaminghi/transition">
+      <img src="https://img.shields.io/npm/v/@jiaminghi/transition.svg" alt="NPM" />
+    </a>
 </p>
 
 ### Transition 是什么?
@@ -39,13 +45,12 @@ import { transition, injectNewCurve } from '@jiaminghi/transition'
 ### 快速体验
 
 ```html
-<!--资源位于个人服务器仅供体验和测试，请勿在生产环境使用-->
 <!--调试版-->
-<script src="http://lib.jiaminghi.com/transition/transition.map.js"></script>
+<script src="https://unpkg.com/@jiaminghi/transition/dist/index.js"></script>
 <!--压缩版-->
-<script src="http://lib.jiaminghi.com/transition/transition.min.js"></script>
+<script src="https://unpkg.com/@jiaminghi/transition/dist/index.min.js"></script>
 <script>
-  const { transition, injectNewCurve } = window.transition
+  const { transition, extendCurves, createAnimator } = window.transition
   // do something
 </script>
 ```
@@ -61,19 +66,23 @@ import { transition, injectNewCurve } from '@jiaminghi/transition'
 
 <h3 align="center">注解</h3>
 
-```javascript
+```typescript
 /**
- * @description 根据动画起止状态及缓动曲线获取若干帧动画状态数据
- * @param {String|Array} tBC               缓动曲线名称或曲线数据
- * @param {Number|Arrya|Object} startState 动画起始状态
- * @param {Number|Arrya|Object} endState   动画结束状态
- * @param {Number} frameNum                动画帧数
- * @param {Boolean} deep                   是否启用递归模式
- * @return {Array} 每一帧的动画数据
+ * @description 基于缓动曲线及起止状态获取若干帧动画状态
+ * @param {EaseCurve} easeCurve 缓动曲线名或数据
+ * @param {T} startState      动画起始状态
+ * @param {T} endState        动画结束状态
+ * @param {Number} frameNum     动画过渡帧数
+ * @param {Boolean} deep        是否启用递归模式
+ * @return {T[]} 过渡帧数据
  */
-function transition(tBC, startState = null, endState = null, frameNum = 30, deep = false) {
-  // ...
-}
+type transition = <T>(
+  easeCurve: EaseCurve,
+  startState: T,
+  endState: T,
+  frameNum = 30,
+  deep = false
+) => T[]
 ```
 
 <h3 align="center">示例</h3>
@@ -87,104 +96,85 @@ function transition(tBC, startState = null, endState = null, frameNum = 30, deep
 
 #### Number
 
-```javascript
+```typescript
 import transition from '@jiaminghi/transition'
 
-const beginState = 0
-const endState = 100
+const start = 0
+const end = 100
+const frameNum = 10
+const easeCurve = 'linear'
 
-const animationState = transition('linear', beginState, endState, 10)
-
+transition(easeCurve, start, end, frameNum)
 /**
- * animationState = [
- *   0, 11.03429355281208, 22.126200274348417, 33.259259259259245, 44.41700960219478,
- *   55.58299039780521, 66.74074074074073, 77.87379972565157, 88.96570644718793, 100
+ * [
+ *    0, 11.111111111111112, 22.222222222222225,
+ *    33.333333333333336, 44.44444444444445, 55.55555555555556,
+ *    66.66666666666667, 77.77777777777779, 88.8888888888889, 100
  * ]
- * /
+ */
 ```
 
 #### Array
 
-```javascript
+```typescript
 import transition from '@jiaminghi/transition'
 
-const beginState = [10, 20, 30]
-const endState = [100, 200, 300]
+const start = [10, 20, 30]
+const end = [100, 200, 300]
+const frameNum = 3
+const easeCurve = 'linear'
 
-const animationState = transition('linear', beginState, endState, 10)
-
+transition(easeCurve, start, end, frameNum)
 /**
- * animationState = [
- *   [10, 20, 30],
- *   [32.415625, 64.83125, 97.24687499999999],
- *   [55, 110, 165],
- *   [77.58437500000001, 155.16875000000002, 232.753125],
- *   [100, 200, 300]
+ * [
+ *    [10, 20, 30],
+ *    [55, 110, 165],
+ *    [100, 200, 300]
  * ]
- * /
+ */
 ```
 
 #### Object
 
-```javascript
+```typescript
 import transition from '@jiaminghi/transition'
 
-const objectBeginState = { x: 10, y: 10, r: 5}
-const objectEndState = { x: 100, y: 10, r: 5}
+const start = { x: 0, y: 20 }
+const end = { x: 100, y: 200 }
+const frameNum = 3
+const easeCurve = 'linear'
 
-const animationState = transition('linear', objectBeginState, objectEndState, 5)
-
+transition(easeCurve, start, end, frameNum)
 /**
- * animationState = [
- *   {x: 10, y: 10, r: 5},
- *   {x: 32.415625, y: 10, r: 5},
- *   {x: 55, y: 10, r: 5},
- *   {x: 77.58437500000001, y: 10, r: 5},
- *   {x: 100, y: 10, r: 5}
+ * [
+ *    { x: 0, y: 20 },
+ *    { x: 50, y: 110 },
+ *    { x: 100, y: 200 }
  * ]
- * /
+ */
 ```
 
-#### Recursive
+#### Deep
 
 启用递归模式以计算`Array`或`Object`中的深层数据.
 
-```javascript
+```typescript
 import transition from '@jiaminghi/transition'
 
-const beginState = {
-  points: [ [10, 30], [20, 80] ],
-  origin: { x: 10, y: 20 },
-  radius: 3
-}
+const start = { x: 0, y: 20, radius: [10, 20, { z: 30 }] }
+const end = { x: 100, y: 200, radius: [50, 90, { z: 10 }] }
+const frameNum = 3
+const easeCurve = 'linear'
+const deep = true
 
-const endState = {
-  points: [ [100, 230], [120, 10] ],
-  origin: { x: 100, y: 200 },
-  radius: 9
-}
-
-const animationState = transition('linear', beginState, endState, 3, true)
-
+transition(easeCurve, start, end, frameNum, deep)
 /**
- * animationState = [
- *   {
- *     origin: { x: 10, y: 20 },
- *     points: [ [10, 30], [20, 80] ],
- *     radius: 3
- *   },
- *   {
- *     origin: { x: 55, y: 110 },
- *     points: [ [55, 130], [70, 45] ],
- *     radius: 6
- *   },
- *   {
- *     origin: { x: 100, y: 200 },
- *     points: [ [100, 230], [120, 10] ],
- *     radius: 9
- *   }
+ * [
+ *    { x: 0, y: 20, radius: [10, 20, { z: 30 }] },
+ *    { x: 50, y: 110, radius: [30, 55, { z: 20 }] },
+ *    { x: 100, y: 200, radius: [50, 90, { z: 10 }] },
  * ]
- * /
+ */
 ```
 
 **Notice**
@@ -194,17 +184,17 @@ const animationState = transition('linear', beginState, endState, 3, true)
 
 <h3 align="center">扩展新曲线</h3>
 
-如果你想扩展新的缓动曲线，你可以使用`Transition`提供的`injectNewCurve`方法去扩展。
+如果你想扩展新的缓动曲线，你可以使用`Transition`提供的`extendCurves`方法去扩展。
 
 ```javascript
-import { injectNewCurve } from '@jiaminghi/transition'
+import { extendCurves } from '@jiaminghi/transition'
 
 const curveName = 'linear'
 
 // 可以使用绘制工具获得
 const bezierCurve = [[[0, 1]], [[1, 0]]]
 
-injectNewCurve(curveName, bezierCurve)
+extendCurves(curveName, bezierCurve)
 ```
 
 [缓动曲线绘制工具](http://transition.jiaminghi.com/draw/)

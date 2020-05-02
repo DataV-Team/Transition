@@ -1,7 +1,7 @@
 import { extendCurves, getFrameStateProgressByCurve } from './curves';
 import { getFrameStateProgressByTween } from './tweens';
-import { Dynamic, DynamicType } from 'types';
-export declare function dynamicValidator(dynamic: Dynamic): DynamicType;
-export declare function getFrameStateProgress(dynamic: Dynamic, frameNum?: number): number[];
+import { EaseCurve, EaseCurveType } from '../types/core';
+export declare function easeCurveValidator(easeCurve: EaseCurve): EaseCurveType;
+export declare function getFrameStateProgress(easeCurve: EaseCurve, frameNum?: number): number[];
 export { extendCurves, getFrameStateProgressByCurve, getFrameStateProgressByTween };
 export default getFrameStateProgress;

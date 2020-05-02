@@ -1,4 +1,4 @@
-import { TransitionCurve, TransitionCurveSegment, BezierCurve } from '../types/curves'
+import { TransitionCurve, TransitionCurveSegment, BezierCurve } from '../types/core/curves'
 
 export const curves = new Map<string, TransitionCurve>([])
 

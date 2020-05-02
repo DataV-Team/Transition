@@ -1,27 +1,27 @@
 import { extendCurves, getFrameStateProgressByCurve, curves } from './curves'
 import { getFrameStateProgressByTween, tweens } from './tweens'
-import { TweenName } from '../types/tweens'
-import { Calculator, Dynamic, DynamicType } from '../types'
+import { TweenName } from '../types/core/tweens'
+import { Calculator, EaseCurve, EaseCurveType } from '../types/core'
 
-export function dynamicValidator(dynamic: Dynamic): DynamicType {
-  const isArray = dynamic instanceof Array
-  const isCurve = curves.has(dynamic as string)
-  const isTween = tweens.has(dynamic as TweenName)
+export function easeCurveValidator(easeCurve: EaseCurve): EaseCurveType {
+  const isArray = easeCurve instanceof Array
+  const isCurve = curves.has(easeCurve as string)
+  const isTween = tweens.has(easeCurve as TweenName)
 
   if (isArray) return 'transitionCurve'
   if (isCurve) return 'transitionCurveName'
   if (isTween) return 'tween'
 
-  throw new Error(`Transition: Invalid dynamic of ${dynamic}`)
+  throw new Error(`Transition: Invalid ease curve of ${easeCurve}`)
 }
 
-export function getFrameStateProgress(dynamic: Dynamic, frameNum = 30): number[] {
-  const dynamicType = dynamicValidator(dynamic)
+export function getFrameStateProgress(easeCurve: EaseCurve, frameNum = 30): number[] {
+  const easeCurveType = easeCurveValidator(easeCurve)
 
   const calculator: Calculator =
-    dynamicType === 'tween' ? getFrameStateProgressByTween : getFrameStateProgressByCurve
+    easeCurveType === 'tween' ? getFrameStateProgressByTween : getFrameStateProgressByCurve
 
-  return calculator(dynamic, frameNum)
+  return calculator(easeCurve, frameNum)
 }
 
 export { extendCurves, getFrameStateProgressByCurve, getFrameStateProgressByTween }

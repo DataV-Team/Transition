@@ -1,5 +1,6 @@
-import { dynamicValidator, getFrameStateProgress, extendCurves } from './core'
-import { Dynamic } from './types'
+import { easeCurveValidator, getFrameStateProgress, extendCurves } from './core'
+import { EaseCurve } from './types/core'
+import { createAnimator } from './animator'
 
 // eslint-disable-next-line
 function getType(target: any): string {
@@ -55,8 +56,8 @@ function getTransitionState(start: number, end: number, frameStateProgress: numb
   return frameStateProgress.map(s => start + minus * s)
 }
 
-function validator<T>(dynamic: Dynamic, startState: T, endState: T, frameNum: number): true {
-  const argTypes = [dynamic, startState, endState, frameNum].map(getType)
+function validator<T>(easeCurve: EaseCurve, startState: T, endState: T, frameNum: number): true {
+  const argTypes = [easeCurve, startState, endState, frameNum].map(getType)
 
   if (argTypes.find(_ => _ === 'undefined')) throw new Error('transition: Missing Parameters!')
 
@@ -66,7 +67,7 @@ function validator<T>(dynamic: Dynamic, startState: T, endState: T, frameNum: nu
   if (argTypes[3] !== 'number' || frameNum <= 0)
     throw new Error(`Transition: frameNum should be a number and greater than 1`)
 
-  dynamicValidator(dynamic)
+  easeCurveValidator(easeCurve)
 
   return true
 }
@@ -113,23 +114,22 @@ function recursiveTransition<T>(
 
 /**
  * @description Get the N-frame animation state by the start and end state
- *              of the animation and the dynamic curve
- * @param {TDynamic} dynamic Dynamic curve name or data
- * @param {Any} startState   Animation start state
- * @param {Any} endState     Animation end state
- * @param {Number} frameNum  Number of Animation frames
- * @param {Boolean} deep     Whether to use recursive mode
- * @return {Array|Boolean} State of each frame of the animation (Invalid input will return false)
+ *              of the animation and the ease curve
+ * @param {EaseCurve} easeCurve Ease curve name or data
+ * @param {Any} startState      Animation start state
+ * @param {Any} endState        Animation end state
+ * @param {Number} frameNum     Number of Animation frames
+ * @param {Boolean} deep        Whether to use recursive mode
+ * @return {Array} State of each frame of the animation
  */
-
 function transition<T>(
-  dynamic: Dynamic,
+  easeCurve: EaseCurve,
   startState: T,
   endState: T,
   frameNum = 30,
   deep = false
 ): T[] {
-  validator(dynamic, startState, endState, frameNum)
+  validator(easeCurve, startState, endState, frameNum)
 
   if (!transitionAble(startState)) {
     console.warn('Transition: Only supports array number and object types')
@@ -138,7 +138,7 @@ function transition<T>(
   }
 
   try {
-    const frameStateProgress = getFrameStateProgress(dynamic, frameNum)
+    const frameStateProgress = getFrameStateProgress(easeCurve, frameNum)
 
     return recursiveTransition(startState, endState, frameStateProgress, deep)
   } catch {
@@ -148,4 +148,6 @@ function transition<T>(
   }
 }
 
-export { extendCurves, transition }
+export { transition, extendCurves, createAnimator }
+
+export default transition

@@ -1,5 +1,6 @@
 .DS_Store
 node_modules
+deploy/config.json
 
 # local env files
 .env.local

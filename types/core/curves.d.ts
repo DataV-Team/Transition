@@ -1,4 +1,4 @@
-import { TransitionCurve } from 'types/curves';
+import { TransitionCurve } from '../types/core/curves';
 export declare const curves: Map<string, TransitionCurve>;
 /**
  * @description Get frame state progress by curve
