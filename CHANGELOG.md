@@ -1,3 +1,9 @@
+# 2.0.1 (2020-07-13)
+
+### Optmization
+
+- **EaseCurve:** Optmization the type of EaseCurve.
+
 # 2.0.0 (2020-05-02)
 
 ### Perfect
